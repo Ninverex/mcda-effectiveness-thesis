@@ -1,0 +1,54 @@
+{
+  "$schema": "http://json-schema.org/draft-07/schema#",
+  "title": "DecisionProblem",
+  "type": "object",
+  "required": [
+    "matrix",
+    "weights",
+    "directions",
+    "alternative_names",
+    "criterion_names"
+  ],
+  "properties": {
+    "matrix": {
+      "type": "array",
+      "items": {
+        "type": "array",
+        "items": { "type": "number" }
+      },
+      "description": "Macierz decyzyjna X (m alternatyw x n kryteriow)."
+    },
+    "weights": {
+      "type": "array",
+      "items": { "type": "number", "minimum": 0 },
+      "description": "Wektor wag kryteriow, suma powinna wynosic 1.0."
+    },
+    "directions": {
+      "type": "array",
+      "items": { "type": "string", "enum": ["max", "min"] },
+      "description": "Kierunek optymalizacji per kryterium: max=zysk, min=koszt."
+    },
+    "alternative_names": {
+      "type": "array",
+      "items": { "type": "string" }
+    },
+    "criterion_names": {
+      "type": "array",
+      "items": { "type": "string" }
+    },
+    "active_mask": {
+      "type": ["array", "null"],
+      "items": { "type": "boolean" },
+      "description": "Flaga Status_Aktywnosci -- do symulacji rank reversal."
+    },
+    "thresholds": {
+      "type": ["object", "null"],
+      "properties": {
+        "q": { "type": ["array", "null"], "items": { "type": "number" } },
+        "p": { "type": ["array", "null"], "items": { "type": "number" } },
+        "v": { "type": ["array", "null"], "items": { "type": "number" } }
+      },
+      "description": "Progi indyferencji (q), preferencji (p), weta (v) -- ELECTRE/PROMETHEE."
+    }
+  }
+}

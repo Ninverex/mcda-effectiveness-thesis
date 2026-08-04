@@ -1,0 +1,31 @@
+{
+  "_comment": "Przyklad domenowy z pracy: wybor wariantu sieci kanalizacyjnej. Kryteria: Koszt_inwestycji (koszt, mln PLN), Czas_realizacji (koszt, miesiace), Przepustowosc (zysk, m3/h), Wplyw_srodowiskowy (zysk, skala 0-100, wyzej = mniej szkodliwy).",
+  "matrix": [
+    [12.5, 18, 450, 70],
+    [9.8, 14, 380, 55],
+    [15.2, 24, 520, 85],
+    [11.0, 16, 400, 60],
+    [13.7, 20, 470, 78]
+  ],
+  "weights": [0.30, 0.20, 0.25, 0.25],
+  "directions": ["min", "min", "max", "max"],
+  "alternative_names": [
+    "Wariant_1_Grawitacyjny",
+    "Wariant_2_Modulowy",
+    "Wariant_3_Hybrydowy",
+    "Wariant_4_Podcisnieniowy",
+    "Wariant_5_Mieszany"
+  ],
+  "criterion_names": [
+    "Koszt_inwestycji",
+    "Czas_realizacji",
+    "Przepustowosc",
+    "Wplyw_srodowiskowy"
+  ],
+  "active_mask": [true, true, true, true, true],
+  "thresholds": {
+    "q": [0.5, 1, 20, 5],
+    "p": [2.0, 4, 60, 15],
+    "v": [5.0, 10, 150, 40]
+  }
+}
