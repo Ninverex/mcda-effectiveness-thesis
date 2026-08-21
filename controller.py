@@ -29,6 +29,10 @@ class MCDMController:
     def available_methods(self) -> list[str]:
         return list(self._strategies.keys())
 
+    def get_strategy(self, method_name: str) -> ICalculationStrategy | None:
+        """Publiczny dostep do zarejestrowanej strategii po nazwie (uzywane m.in. przez webapp/routes.py)."""
+        return self._strategies.get(method_name)
+
     def run(
         self,
         problem: DecisionProblem,
