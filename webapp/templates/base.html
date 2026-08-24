@@ -1,0 +1,46 @@
+<!DOCTYPE html>
+<html lang="pl">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>{% block title %}MCDM Toolkit{% endblock %}</title>
+  <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
+</head>
+<body>
+  <header class="topbar">
+    <div class="topbar-inner">
+      <a class="brand" href="{{ url_for('main.index') }}">MCDM Toolkit</a>
+      <nav>
+        <a href="{{ url_for('main.index') }}">Start</a>
+        {% if session.get('problem') %}
+        <a href="{{ url_for('main.problem_detail') }}">Problem</a>
+        <a href="{{ url_for('main.ahp_pairwise') }}">AHP (parami)</a>
+        <a href="{{ url_for('main.results') }}">Wyniki</a>
+        <a href="{{ url_for('main.rank_reversal') }}">Rank reversal</a>
+        <a href="{{ url_for('main.sensitivity') }}">Wrazliwosc wag</a>
+        {% endif %}
+      </nav>
+    </div>
+  </header>
+
+  <main class="container">
+    {% with messages = get_flashed_messages(with_categories=true) %}
+      {% if messages %}
+        <div class="flash-stack">
+          {% for category, message in messages %}
+            <div class="flash flash-{{ category }}">{{ message }}</div>
+          {% endfor %}
+        </div>
+      {% endif %}
+    {% endwith %}
+
+    {% block content %}{% endblock %}
+  </main>
+
+  <footer class="footer">
+    <div class="container">
+      MCDM Toolkit &middot; praca inzynierska &middot; Maciej Pintal, 131491
+    </div>
+  </footer>
+</body>
+</html>
