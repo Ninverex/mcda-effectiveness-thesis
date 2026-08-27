@@ -1,0 +1,39 @@
+{% extends "base.html" %}
+{% block title %}MCDM Toolkit - Start{% endblock %}
+{% block content %}
+<h1>Ocena skutecznosci metod wielokryterialnego wspomagania decyzji</h1>
+<p class="lead">Wybierz przykladowy problem decyzyjny lub wczytaj wlasny plik JSON zgodny ze schema.</p>
+
+<section class="card-grid">
+  {% for key, label in examples.items() %}
+  <div class="card">
+    <h3>{{ label }}</h3>
+    <form method="post" action="{{ url_for('main.load_example', name=key) }}">
+      <button type="submit" class="btn btn-primary">Wczytaj przyklad</button>
+    </form>
+  </div>
+  {% endfor %}
+</section>
+
+<section class="card">
+  <h3>Wlasny problem decyzyjny</h3>
+  <p class="muted">Plik JSON zgodny ze schema (<code>data/schema.json</code>) -- macierz decyzyjna, wagi, kierunki optymalizacji, nazwy alternatyw i kryteriow.</p>
+  <form method="post" action="{{ url_for('main.upload') }}" enctype="multipart/form-data">
+    <input type="file" name="problem_file" accept="application/json" required>
+    <button type="submit" class="btn btn-secondary">Wczytaj i zwaliduj</button>
+  </form>
+</section>
+
+{% if problem_source %}
+<section class="card card-active">
+  <h3>Aktualnie wczytany problem</h3>
+  <p>{{ problem_source }}</p>
+  <div class="actions">
+    <a class="btn btn-primary" href="{{ url_for('main.problem_detail') }}">Przejdz do podgladu</a>
+    <form method="post" action="{{ url_for('main.reset') }}" style="display:inline">
+      <button type="submit" class="btn btn-outline">Wyczysc</button>
+    </form>
+  </div>
+</section>
+{% endif %}
+{% endblock %}
