@@ -1,0 +1,47 @@
+{% extends "base.html" %}
+{% block title %}Podglad problemu{% endblock %}
+{% block content %}
+<h1>Podglad problemu decyzyjnego</h1>
+<p class="muted">Zrodlo: {{ source }}</p>
+
+<div class="badge badge-success">Dane zwalidowane poprawnie (WN1: brak brakow, suma wag = 1.0)</div>
+
+<h2>Macierz decyzyjna</h2>
+<table class="data-table">
+  <thead>
+    <tr>
+      <th>Alternatywa</th>
+      {% for c in problem.criterion_names %}<th>{{ c }}</th>{% endfor %}
+      <th>Aktywna</th>
+    </tr>
+  </thead>
+  <tbody>
+    {% for name, row, active in rows %}
+    <tr class="{{ '' if active else 'row-inactive' }}">
+      <td>{{ name }}</td>
+      {% for v in row %}<td>{{ "%.2f"|format(v) }}</td>{% endfor %}
+      <td>{{ "tak" if active else "nie" }}</td>
+    </tr>
+    {% endfor %}
+  </tbody>
+</table>
+
+<h2>Kryteria i wagi</h2>
+<table class="data-table">
+  <thead><tr><th>Kryterium</th><th>Waga</th><th>Kierunek</th></tr></thead>
+  <tbody>
+    {% for c, w, d in zip(problem.criterion_names, problem.weights.tolist(), problem.directions) %}
+    <tr>
+      <td>{{ c }}</td>
+      <td>{{ "%.3f"|format(w) }}</td>
+      <td>{{ "zysk (max)" if d == "max" else "koszt (min)" }}</td>
+    </tr>
+    {% endfor %}
+  </tbody>
+</table>
+
+<div class="actions">
+  <a class="btn btn-primary" href="{{ url_for('main.results') }}">Uruchom wszystkie metody</a>
+  <a class="btn btn-secondary" href="{{ url_for('main.ahp_pairwise') }}">Zdefiniuj wagi AHP (porownania parami)</a>
+</div>
+{% endblock %}

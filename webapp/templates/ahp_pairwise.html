@@ -1,0 +1,58 @@
+{% extends "base.html" %}
+{% block title %}AHP - porownania parami{% endblock %}
+{% block content %}
+<h1>AHP: macierz porownan parami kryteriow</h1>
+<p class="muted">
+  Skala Saaty'ego 1-9: wpisz wartosc "5" jesli kryterium wierszowe jest wazniejsze,
+  lub "1/5" jesli kolumnowe jest wazniejsze. Wartosc "1" oznacza rownowazne kryteria.
+</p>
+
+<form method="post">
+  <table class="data-table">
+    <thead>
+      <tr><th>Para kryteriow</th><th>Waznosc (np. 3, 1/3, 1)</th></tr>
+    </thead>
+    <tbody>
+      {% for i, j in pairs %}
+      <tr>
+        <td>{{ problem.criterion_names[i] }} &nbsp;vs&nbsp; {{ problem.criterion_names[j] }}</td>
+        <td>
+          <input type="text" name="pair_{{ i }}_{{ j }}"
+                 value="{{ values.get('pair_' ~ i ~ '_' ~ j, '1') }}" size="6">
+        </td>
+      </tr>
+      {% endfor %}
+    </tbody>
+  </table>
+  <button type="submit" class="btn btn-primary">Oblicz wagi i wspolczynnik spojnosci</button>
+</form>
+
+{% if result %}
+<h2>Wyliczone wagi kryteriow</h2>
+<table class="data-table">
+  <thead><tr><th>Kryterium</th><th>Waga</th></tr></thead>
+  <tbody>
+    {% for c, w in zip(problem.criterion_names, result.weights.tolist()) %}
+    <tr><td>{{ c }}</td><td>{{ "%.4f"|format(w) }}</td></tr>
+    {% endfor %}
+  </tbody>
+</table>
+
+<p>CI (wskaznik spojnosci) = {{ "%.4f"|format(result.CI) }} &nbsp;&middot;&nbsp; CR (wspolczynnik spojnosci) = {{ "%.4f"|format(result.CR) }}</p>
+
+{% if result.consistent %}
+<div class="badge badge-success">Osady sa spojne (CR &le; 0.10) -- mozna uzyc tych wag</div>
+<form method="post">
+  {% for i, j in pairs %}
+  <input type="hidden" name="pair_{{ i }}_{{ j }}" value="{{ values.get('pair_' ~ i ~ '_' ~ j, '1') }}">
+  {% endfor %}
+  <button type="submit" name="use_weights" value="1" class="btn btn-primary">Uzyj tych wag w problemie</button>
+</form>
+{% else %}
+<div class="badge badge-error">
+  CR &gt; 0.10 -- osady eksperckie sa niespojne. Zrewiduj najbardziej skrajne porownania
+  przed uzyciem tych wag (zgodnie z PU2: blokada przejscia do obliczen koncowych).
+</div>
+{% endif %}
+{% endif %}
+{% endblock %}
