@@ -1,0 +1,37 @@
+{% extends "base.html" %}
+{% block title %}Wyniki{% endblock %}
+{% block content %}
+<h1>Rankingi wszystkich metod</h1>
+<p class="muted">Ten sam problem decyzyjny, cztery rozne algorytmy MCDM.</p>
+
+{% for name, result in results.items() %}
+<h2>{{ name }}</h2>
+<table class="data-table">
+  <thead><tr><th>Pozycja</th><th>Alternatywa</th><th>Wynik</th></tr></thead>
+  <tbody>
+    {% for idx in result.ranking %}
+    <tr>
+      <td>{{ loop.index }}</td>
+      <td>{{ result.alternative_names[idx] }}</td>
+      <td>{{ "%.4f"|format(result.scores[idx]) }}</td>
+    </tr>
+    {% endfor %}
+  </tbody>
+</table>
+{% endfor %}
+
+<h2>Zgodnosc rankingow (Kendall &tau; / Spearman &rho;)</h2>
+<p class="muted">Wartosci blisko 1.0 oznacza duza zgodnosc metod, blisko 0 lub ujemne -- istotne rozbieznosci.</p>
+<table class="data-table">
+  <thead><tr><th>Metoda A</th><th>Metoda B</th><th>Kendall &tau;</th><th>Spearman &rho;</th></tr></thead>
+  <tbody>
+    {% for pair, corr in correlations.items() %}
+    <tr>
+      <td>{{ pair[0] }}</td><td>{{ pair[1] }}</td>
+      <td>{{ "%.3f"|format(corr.kendall_tau) }}</td>
+      <td>{{ "%.3f"|format(corr.spearman_rho) }}</td>
+    </tr>
+    {% endfor %}
+  </tbody>
+</table>
+{% endblock %}
