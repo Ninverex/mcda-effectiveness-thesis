@@ -71,29 +71,13 @@ class PrometheeStrategy(ICalculationStrategy):
         w = problem.weights
         directions = problem.directions
         m, n = X.shape
-
         thresholds = problem.thresholds or {}
-        q_list = thresholds.get("q") or [0.0] * n
-        p_list = thresholds.get("p") or [None] * n
 
         # Macierz zagregowanych indeksow preferencji pi(a,b)
         pi = np.zeros((m, m))
 
         for j in range(n):
-            col = X[:, j]
-            # Przeksztalcenie tak, by wieksza wartosc = lepsza (typ 'zysk')
-            values = col if directions[j] == "max" else -col
-
-            # Macierz roznic d(a,b) = g(a) - g(b), ksztalt (m, m)
-            diff = values.reshape(-1, 1) - values.reshape(1, -1)
-
-            q = q_list[j] if q_list[j] is not None else 0.0
-            p = p_list[j]
-            if p is None:
-                span = values.max() - values.min()
-                p = max(span * self.default_preference_fraction, q + 1e-9)
-
-            pref_matrix = _linear_preference(diff, q=q, p=p)
+            pref_matrix = self._criterion_preference_matrix(X, directions, j, thresholds)
             pi += w[j] * pref_matrix
 
         np.fill_diagonal(pi, 0.0)
@@ -120,6 +104,68 @@ class PrometheeStrategy(ICalculationStrategy):
                 "promethee_i": promethee_i,
             },
         )
+
+    def unicriterion_net_flows(self, problem: DecisionProblem) -> np.ndarray:
+        """
+        Zwraca macierz (m x n) jednokryterialnych przeplywow netto:
+        phi_j(a) = (1/(m-1)) * sum_b [P_j(a,b) - P_j(b,a)] -- przeplyw
+        netto policzony OSOBNO dla kazdego kryterium, bez wazenia.
+
+        To jest dokladnie macierz wejsciowa do geometrycznej analizy
+        GAIA (Brans, Mareschal): kazdy wiersz to "profil" alternatywy
+        w przestrzeni jednokryterialnych przeplywow, kazda kolumna to
+        os odpowiadajaca jednemu kryterium. Rzutowana przez PCA do 2D
+        (patrz mcdm/visualization/gaia.py) pozwala zobaczyc konflikty
+        miedzy kryteriami i pozycje alternatyw wzgledem nich.
+        """
+        X = problem.active_matrix
+        directions = problem.directions
+        m, n = X.shape
+        thresholds = problem.thresholds or {}
+
+        flows = np.zeros((m, n))
+        for j in range(n):
+            pref_matrix = self._criterion_preference_matrix(X, directions, j, thresholds)
+            np.fill_diagonal(pref_matrix, 0.0)
+            flows[:, j] = (pref_matrix.sum(axis=1) - pref_matrix.sum(axis=0)) / (m - 1)
+        return flows
+
+    def _criterion_preference_matrix(
+        self,
+        X: np.ndarray,
+        directions: list[str],
+        j: int,
+        thresholds: dict,
+    ) -> np.ndarray:
+        """
+        Wylicza macierz preferencji P_j(a,b) dla pojedynczego
+        kryterium j, uwzgledniajac jego kierunek optymalizacji oraz
+        progi q/p (wspoldzielone przez calculate_ranking() i
+        unicriterion_net_flows(), zeby nie duplikowac logiki progow).
+        """
+        col = X[:, j]
+        values = col if directions[j] == "max" else -col
+
+        # Macierz roznic d(a,b) = g(a) - g(b), ksztalt (m, m)
+        diff = values.reshape(-1, 1) - values.reshape(1, -1)
+
+        q, p = self._resolve_thresholds(values, j, thresholds)
+        return _linear_preference(diff, q=q, p=p)
+
+    def _resolve_thresholds(
+        self, values: np.ndarray, j: int, thresholds: dict
+    ) -> tuple[float, float]:
+        """Zwraca (q, p) dla kryterium j: z problem.thresholds jesli podane,
+        w przeciwnym razie q=0 i p szacowane jako ulamek rozstepu wartosci."""
+        q_list = thresholds.get("q") or [0.0] * len(values)
+        p_list = thresholds.get("p") or [None] * len(values)
+
+        q = q_list[j] if q_list[j] is not None else 0.0
+        p = p_list[j]
+        if p is None:
+            span = values.max() - values.min()
+            p = max(span * self.default_preference_fraction, q + 1e-9)
+        return q, p
 
     @staticmethod
     def _partial_ranking(phi_plus: np.ndarray, phi_minus: np.ndarray) -> dict:
