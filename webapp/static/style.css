@@ -124,3 +124,17 @@ select, input[type=text], input[type=file] {
 .actions { margin-top: 20px; display: flex; gap: 12px; flex-wrap: wrap; }
 
 .footer { text-align: center; padding: 24px; color: var(--muted); font-size: 13px; }
+
+.chart-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(320px, 1fr));
+  gap: 16px;
+  margin-bottom: 8px;
+}
+.chart-img { width: 100%; height: auto; border-radius: 8px; display: block; }
+
+.diff-table .diff-row-removed { color: var(--muted); text-decoration: line-through; }
+.diff-table .diff-row-changed { background: var(--warning-bg); }
+.diff-table .diff-row-changed td { color: var(--warning-text); }
+.diff-table .diff-row-unchanged { background: var(--success-bg); }
+.diff-table .diff-row-unchanged td { color: var(--success-text); }

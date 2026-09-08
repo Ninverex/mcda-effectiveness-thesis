@@ -1,0 +1,40 @@
+{% extends "base.html" %}
+{% block title %}Rank reversal{% endblock %}
+{% block content %}
+<h1>Symulacja odwrocenia rankingu</h1>
+<p class="muted">Usuwa wybrana alternatywe z macierzy i przelicza ranking ponownie, aby sprawdzic stabilnosc czolowki (PU4).</p>
+
+<form method="post">
+  <label>Metoda:
+    <select name="method">
+      {% for m in methods %}<option value="{{ m }}">{{ m }}</option>{% endfor %}
+    </select>
+  </label>
+  <label>Usun alternatywe:
+    <select name="alternative">
+      {% for a in problem.alternative_names %}<option value="{{ a }}">{{ a }}</option>{% endfor %}
+    </select>
+  </label>
+  <button type="submit" class="btn btn-primary">Symuluj</button>
+</form>
+
+{% if report %}
+<div class="badge {{ 'badge-error' if report.reversal_detected else 'badge-success' }}">
+  {{ "Wykryto odwrocenie rankingu w czolowce" if report.reversal_detected else "Brak odwrocenia rankingu w czolowce" }}
+</div>
+
+<div class="card">
+  <h2>Wykres zmiany pozycji</h2>
+  <img src="data:image/png;base64,{{ diff_chart_b64 }}" alt="Wykres nachylen pokazujacy zmiane pozycji alternatyw przed i po usunieciu" class="chart-img">
+</div>
+
+<h2>Ranking przed usunieciem ({{ report.method_name }})</h2>
+<ol>{% for n in report.baseline_order %}<li>{{ n }}</li>{% endfor %}</ol>
+
+<h2>Ranking po usunieciu "{{ report.removed_alternative }}"</h2>
+<ol>{% for n in report.modified_order %}<li>{{ n }}</li>{% endfor %}</ol>
+
+<h2>Raport roznicowy</h2>
+{{ diff_html|safe }}
+{% endif %}
+{% endblock %}

@@ -23,6 +23,10 @@ from mcdm.evaluation.sensitivity import weight_sensitivity_analysis
 from mcdm.models.decision_problem import DecisionProblem
 from mcdm.strategies import AhpStrategy, ElectreIStrategy, PrometheeStrategy, TopsisStrategy
 from mcdm.validation.validators import ValidationError, validate_decision_problem
+from mcdm.visualization._utils import figure_to_base64
+from mcdm.visualization.diff_report import build_diff_html_table, plot_rank_reversal_diff
+from mcdm.visualization.gaia import plot_gaia_plane
+from mcdm.visualization.radar import plot_radar_chart
 
 bp = Blueprint("main", __name__)
 
@@ -165,15 +169,19 @@ def ahp_pairwise():
     n = problem.n_criteria
     pairs = [(i, j) for i in range(n) for j in range(i + 1, n)]
     result = None
-    submitted_values = {f"pair_{i}_{j}": "1" for i, j in pairs}
+    # Wczytujemy wszystkie zgloszone wartosci z gory (nie w trakcie
+    # walidacji), zeby przy bledzie na jednej parze nie zgubic tego,
+    # co uzytkownik wpisal dla pozostalych par -- formularz po
+    # ponownym wyrenderowaniu ma pokazac dokladnie to, co wpisal.
+    submitted_values = {
+        f"pair_{i}_{j}": request.form.get(f"pair_{i}_{j}", "1") for i, j in pairs
+    } if request.method == "POST" else {f"pair_{i}_{j}": "1" for i, j in pairs}
 
     if request.method == "POST":
         matrix = np.ones((n, n))
         try:
             for i, j in pairs:
-                raw = request.form.get(f"pair_{i}_{j}", "1")
-                submitted_values[f"pair_{i}_{j}"] = raw
-                value = _parse_saaty_value(raw)
+                value = _parse_saaty_value(submitted_values[f"pair_{i}_{j}"])
                 matrix[i, j] = value
                 matrix[j, i] = 1.0 / value
         except (ValueError, ZeroDivisionError) as exc:
@@ -243,11 +251,23 @@ def results():
 
     correlations = compare_all_pairs(all_results)
 
+    radar_chart_b64 = figure_to_base64(plot_radar_chart(problem))
+
+    # GAIA wymaga co najmniej 3 kryteriow (patrz docstring
+    # plot_gaia_plane) -- przy mniejszej liczbie po prostu pomijamy
+    # ten wykres zamiast pokazywac blad na stronie wynikow.
+    try:
+        gaia_plane_b64 = figure_to_base64(plot_gaia_plane(problem))
+    except ValueError:
+        gaia_plane_b64 = None
+
     return render_template(
         "results.html",
         problem=problem,
         results=all_results,
         correlations=correlations,
+        radar_chart_b64=radar_chart_b64,
+        gaia_plane_b64=gaia_plane_b64,
     )
 
 
@@ -259,6 +279,8 @@ def rank_reversal():
 
     controller = _build_controller()
     report = None
+    diff_html = None
+    diff_chart_b64 = None
 
     if request.method == "POST":
         method_name = request.form.get("method")
@@ -269,6 +291,8 @@ def rank_reversal():
         else:
             try:
                 report = simulate_rank_reversal(problem, strategy, alternative_name)
+                diff_html = build_diff_html_table(report)
+                diff_chart_b64 = figure_to_base64(plot_rank_reversal_diff(report))
             except ValueError as exc:
                 flash(str(exc), "error")
 
@@ -277,6 +301,8 @@ def rank_reversal():
         problem=problem,
         methods=controller.available_methods(),
         report=report,
+        diff_html=diff_html,
+        diff_chart_b64=diff_chart_b64,
     )
 
 
