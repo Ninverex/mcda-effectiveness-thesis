@@ -182,3 +182,33 @@ def test_sensitivity_analysis(client):
     )
     assert response.status_code == 200
     assert "Lider rankingu".encode("utf-8") in response.data
+
+
+# ----------------------------------------------------------------------
+# Wizualizacje (radar, GAIA, raport roznicowy rank reversal)
+# ----------------------------------------------------------------------
+
+def test_results_page_embeds_radar_chart(client):
+    _load_example(client)
+    response = client.get("/problem/results")
+    assert response.status_code == 200
+    assert b"data:image/png;base64," in response.data
+
+
+def test_results_page_embeds_gaia_plane_for_problem_with_3plus_criteria(client):
+    # sewage_network_variants ma 4 kryteria -> GAIA powinno sie wygenerowac
+    _load_example(client)
+    response = client.get("/problem/results")
+    assert response.status_code == 200
+    assert "Plaszczyzna GAIA".encode("utf-8") in response.data
+
+
+def test_rank_reversal_page_embeds_diff_chart_and_table(client):
+    _load_example(client)
+    response = client.post(
+        "/problem/rank-reversal",
+        data={"method": "TOPSIS", "alternative": "Wariant_2_Modulowy"},
+    )
+    assert response.status_code == 200
+    assert b"data:image/png;base64," in response.data
+    assert b"diff-table" in response.data
