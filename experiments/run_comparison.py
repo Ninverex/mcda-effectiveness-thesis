@@ -1,11 +1,9 @@
 """
 Skrypt demonstracyjny: wczytanie problemu decyzyjnego, walidacja,
-uruchomienie TOPSIS przez kontroler.
-
-W miare dopisywania kolejnych strategii (AHP, PROMETHEE, ELECTRE)
-ten skrypt bedzie rozbudowywany o controller.run_all(...) oraz
-wywolania modulu evaluation (Kendall/Spearman, rank reversal,
-sensitivity) -- docelowo to on wygeneruje dane do rozdzialu 4 pracy.
+uruchomienie wszystkich 4 metod przez kontroler, ocena zgodnosci
+rankingow oraz zapis wizualizacji (radar, GAIA, rank reversal) do
+plikow PNG w experiments/output/ -- gotowy material do rozdzialu 4
+pracy (bez recznego odpalania GUI).
 
 Uruchomienie:
     cd mcdm-toolkit
@@ -27,6 +25,13 @@ from mcdm.strategies import (
     ElectreIStrategy,
 )
 from mcdm.evaluation.rank_correlation import compare_rankings
+from mcdm.evaluation.rank_reversal import simulate_rank_reversal
+from mcdm.visualization._utils import save_figure
+from mcdm.visualization.diff_report import plot_rank_reversal_diff
+from mcdm.visualization.gaia import plot_gaia_plane
+from mcdm.visualization.radar import plot_radar_chart
+
+OUTPUT_DIR = Path(__file__).resolve().parent / "output"
 
 
 def main():
@@ -64,6 +69,32 @@ def main():
                 f"  {a:<12} vs {b:<12}: "
                 f"tau={corr['kendall_tau']:.3f}, rho={corr['spearman_rho']:.3f}"
             )
+
+    print(f"\n=== Zapisywanie wizualizacji do {OUTPUT_DIR} ===")
+
+    radar_path = save_figure(
+        plot_radar_chart(problem), OUTPUT_DIR / "radar_profiles.png"
+    )
+    print(f"  Zapisano: {radar_path}")
+
+    gaia_path = save_figure(plot_gaia_plane(problem), OUTPUT_DIR / "gaia_plane.png")
+    print(f"  Zapisano: {gaia_path}")
+
+    # Rank reversal: usuwamy najslabsza alternatywe wg TOPSIS i patrzymy,
+    # czy zmienila sie kolejnosc w czolowce (badanie stabilnosci z 4.4)
+    topsis_result = results["TOPSIS"]
+    weakest_alt = topsis_result.as_ordered_names()[-1]
+    report = simulate_rank_reversal(
+        problem, controller.get_strategy("TOPSIS"), alternative_name=weakest_alt
+    )
+    diff_path = save_figure(
+        plot_rank_reversal_diff(report), OUTPUT_DIR / "rank_reversal_diff.png"
+    )
+    print(f"  Zapisano: {diff_path}")
+    print(
+        f"  ({'WYKRYTO' if report.reversal_detected else 'brak'} odwrocenia "
+        f"rankingu po usunieciu '{weakest_alt}')"
+    )
 
 
 if __name__ == "__main__":
