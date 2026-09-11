@@ -1,0 +1,29 @@
+{
+  "_comment": "Realne dane z literatury (nie dane syntetyczne). Zrodlo: Khattiyavong, C.; Lee, H.S. (2019). \"Performance Simulation and Assessment of an Appropriate Wastewater Treatment Technology in a Densely Populated Growing City in a Developing Country: A Case Study in Vientiane, Laos.\" Water, 11(5), 1012. https://doi.org/10.3390/w11051012 -- artykul opublikowany na licencji CC BY 4.0 (dozwolone ponowne wykorzystanie z podaniem zrodla). Macierz decyzyjna pochodzi z Tabeli 3 artykulu; wagi (eksperyment 1: rowne wagi) z Tabeli S5 materialu uzupelniajacego. Szescioma alternatywami sa technologie oczyszczania sciekow rozwazane dla miasta Vientiane (stolica Laosu): systemy przydomowe (On-site), zdecentralizowane (DEWATS) i scentralizowane (CEWATS), kazdy w dwoch wariantach technologicznych (zloze biologiczne / osad czynny). Wszystkie cztery kryteria sa typu 'koszt' (mniej = lepiej srodowiskowo). Implementacja TOPSIS w tym projekcie odtwarza opublikowane wyniki (Tabela 4, Eksperyment 1) z dokladnoscia do 3 miejsc po przecinku -- patrz tests/test_literature_validation.py.",
+  "matrix": [
+    [197760, 28800, 16320, 19407],
+    [150720, 63360, 16320, 42578],
+    [31027, 26035, 16416, 17496],
+    [36230, 53530, 16473.6, 35972],
+    [32013, 20788, 16660.8, 13956],
+    [21981, 65693, 13359.63, 44146]
+  ],
+  "weights": [0.25, 0.25, 0.25, 0.25],
+  "directions": ["min", "min", "min", "min"],
+  "alternative_names": [
+    "On-site_I",
+    "On-site_II",
+    "DEWATS_I",
+    "DEWATS_II",
+    "CEWATS_I",
+    "CEWATS_II"
+  ],
+  "criterion_names": [
+    "Land_requirement_m2",
+    "Electricity_use_kWh_d",
+    "Sludge_production_kg_d",
+    "CO2_emission_kg_d"
+  ],
+  "active_mask": [true, true, true, true, true, true],
+  "thresholds": null
+}
