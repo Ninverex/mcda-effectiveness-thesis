@@ -35,6 +35,7 @@ EXAMPLES_DIR = Path(__file__).resolve().parent.parent / "data" / "examples"
 EXAMPLE_LABELS = {
     "laptop_selection": "Wybor laptopa (przyklad dydaktyczny)",
     "sewage_network_variants": "Warianty sieci kanalizacyjnej (przyklad domenowy)",
+    "wastewater_treatment_vientiane": "Oczyszczanie sciekow, Vientiane (dane rzeczywiste z literatury)",
 }
 
 
