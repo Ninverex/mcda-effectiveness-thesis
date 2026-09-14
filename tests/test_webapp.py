@@ -47,6 +47,20 @@ def test_load_example_and_view_problem(client):
     assert "Wariant_1_Grawitacyjny".encode("utf-8") in response.data
 
 
+def test_load_real_literature_example_runs_all_methods(client):
+    """
+    Realny zbior danych z literatury (Khattiyavong & Lee, 2019) musi
+    dzialac poprawnie ze wszystkimi 4 metodami w GUI, nie tylko
+    z syntetycznymi przykladami autora.
+    """
+    _load_example(client, name="wastewater_treatment_vientiane")
+    response = client.get("/problem/results")
+    assert response.status_code == 200
+    for method in ["TOPSIS", "AHP", "PROMETHEE", "ELECTRE I"]:
+        assert method.encode("utf-8") in response.data
+    assert "CEWATS_I".encode("utf-8") in response.data
+
+
 def test_problem_page_redirects_without_loaded_problem(client):
     response = client.get("/problem", follow_redirects=True)
     assert response.status_code == 200
