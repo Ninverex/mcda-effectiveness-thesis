@@ -37,6 +37,21 @@ def figure_to_base64(fig: plt.Figure, dpi: int = 110) -> str:
     return base64.b64encode(buffer.read()).decode("ascii")
 
 
+def figure_to_png_bytes(fig: plt.Figure, dpi: int = 150) -> bytes:
+    """
+    Konwertuje figure matplotlib do surowych bajtow PNG -- uzywane
+    przy osadzaniu wykresow w raportach PDF (reportlab.platypus.Image
+    przyjmuje strumien bajtow, nie base64).
+
+    Zamyka figure po konwersji (jak figure_to_base64).
+    """
+    buffer = io.BytesIO()
+    fig.savefig(buffer, format="png", dpi=dpi, bbox_inches="tight")
+    plt.close(fig)
+    buffer.seek(0)
+    return buffer.getvalue()
+
+
 def save_figure(fig: plt.Figure, path: str | Path, dpi: int = 150) -> Path:
     """Zapisuje figure do pliku PNG (uzywane przez experiments/run_comparison.py)."""
     path = Path(path)
