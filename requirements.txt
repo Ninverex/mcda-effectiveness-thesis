@@ -7,3 +7,5 @@ scikit-learn>=1.4
 jsonschema>=4.21
 pytest>=8.0
 flask>=3.0
+reportlab>=4.1
+openpyxl>=3.1
