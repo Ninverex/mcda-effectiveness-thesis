@@ -10,11 +10,21 @@ wymaga bazy danych ani serwera stanu.
 
 from __future__ import annotations
 
+import io
 import json
 from pathlib import Path
 
 import numpy as np
-from flask import Blueprint, flash, redirect, render_template, request, session, url_for
+from flask import (
+    Blueprint,
+    flash,
+    redirect,
+    render_template,
+    request,
+    send_file,
+    session,
+    url_for,
+)
 
 from mcdm.controller import MCDMController
 from mcdm.evaluation.rank_correlation import compare_all_pairs
@@ -27,6 +37,7 @@ from mcdm.visualization._utils import figure_to_base64
 from mcdm.visualization.diff_report import build_diff_html_table, plot_rank_reversal_diff
 from mcdm.visualization.gaia import plot_gaia_plane
 from mcdm.visualization.radar import plot_radar_chart
+from webapp.reports import build_excel_report, build_pdf_report
 
 bp = Blueprint("main", __name__)
 
@@ -272,6 +283,54 @@ def results():
     )
 
 
+@bp.route("/problem/results/export/pdf")
+def export_results_pdf():
+    problem, err = _require_problem()
+    if err:
+        return err
+
+    controller = _build_controller()
+    try:
+        all_results = controller.run_all(problem)
+    except ValidationError as exc:
+        flash(f"Blad walidacji: {exc}", "error")
+        return redirect(url_for("main.problem_detail"))
+
+    pdf_bytes = build_pdf_report(
+        problem, all_results, session.get("problem_source", "nieznane")
+    )
+    return send_file(
+        io.BytesIO(pdf_bytes),
+        mimetype="application/pdf",
+        as_attachment=True,
+        download_name="mcdm_raport.pdf",
+    )
+
+
+@bp.route("/problem/results/export/excel")
+def export_results_excel():
+    problem, err = _require_problem()
+    if err:
+        return err
+
+    controller = _build_controller()
+    try:
+        all_results = controller.run_all(problem)
+    except ValidationError as exc:
+        flash(f"Blad walidacji: {exc}", "error")
+        return redirect(url_for("main.problem_detail"))
+
+    excel_bytes = build_excel_report(
+        problem, all_results, session.get("problem_source", "nieznane")
+    )
+    return send_file(
+        io.BytesIO(excel_bytes),
+        mimetype="application/vnd.openxmlformats-officedocument.spreadsheetml.sheet",
+        as_attachment=True,
+        download_name="mcdm_raport.xlsx",
+    )
+
+
 @bp.route("/problem/rank-reversal", methods=["GET", "POST"])
 def rank_reversal():
     problem, err = _require_problem()
@@ -334,3 +393,68 @@ def sensitivity():
         methods=controller.available_methods(),
         report=report,
     )
+
+
+# ----------------------------------------------------------------------
+# Porownanie side-by-side dwoch niezaleznych problemow decyzyjnych
+# ----------------------------------------------------------------------
+
+
+@bp.route("/compare", methods=["GET", "POST"])
+def compare():
+    """
+    Porownanie dwoch (niekoniecznie takich samych) problemow
+    decyzyjnych obok siebie. Niezalezne od "biezacego problemu"
+    trzymanego w sesji (PU1) -- wlasny, samodzielny przeplyw, w
+    ktorym obie strony sa wybierane na tej samej stronie.
+    """
+    comparison = None
+
+    if request.method == "POST":
+        controller = _build_controller()
+        try:
+            problem_a, label_a = _load_compare_side(request, side="a")
+            problem_b, label_b = _load_compare_side(request, side="b")
+        except (ValidationError, ValueError, json.JSONDecodeError, KeyError) as exc:
+            flash(f"Blad wczytywania danych do porownania: {exc}", "error")
+            return render_template("compare.html", examples=EXAMPLE_LABELS, comparison=None)
+
+        comparison = {
+            "a": {
+                "label": label_a,
+                "problem": problem_a,
+                "results": controller.run_all(problem_a),
+                "radar_b64": figure_to_base64(plot_radar_chart(problem_a)),
+            },
+            "b": {
+                "label": label_b,
+                "problem": problem_b,
+                "results": controller.run_all(problem_b),
+                "radar_b64": figure_to_base64(plot_radar_chart(problem_b)),
+            },
+        }
+
+    return render_template("compare.html", examples=EXAMPLE_LABELS, comparison=comparison)
+
+
+def _load_compare_side(request, side: str) -> tuple[DecisionProblem, str]:
+    """
+    Wczytuje jedna strone porownania (side = "a" lub "b"): z wgranego
+    pliku JSON, jesli podano, w przeciwnym razie z wybranego przykladu
+    wbudowanego. Zwraca (problem, etykieta_zrodla).
+    """
+    file = request.files.get(f"file_{side}")
+    if file and file.filename:
+        payload = json.load(file.stream)
+        problem = DecisionProblem.from_dict(payload)
+        validate_decision_problem(problem)
+        return problem, file.filename
+
+    example_name = request.form.get(f"example_{side}")
+    if not example_name or example_name not in EXAMPLE_LABELS:
+        raise ValueError(f"Nie wybrano zbioru danych dla strony {side.upper()}.")
+
+    path = EXAMPLES_DIR / f"{example_name}.json"
+    problem = DecisionProblem.from_json(path)
+    validate_decision_problem(problem)
+    return problem, EXAMPLE_LABELS[example_name]

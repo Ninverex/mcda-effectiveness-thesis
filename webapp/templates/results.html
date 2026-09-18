@@ -4,6 +4,24 @@
 <h1>Rankingi wszystkich metod</h1>
 <p class="muted">Ten sam problem decyzyjny, cztery rozne algorytmy MCDM.</p>
 
+<div class="actions">
+  <a class="btn btn-secondary" href="{{ url_for('main.export_results_pdf') }}">Pobierz raport PDF</a>
+  <a class="btn btn-secondary" href="{{ url_for('main.export_results_excel') }}">Pobierz jako Excel</a>
+</div>
+
+<div class="chart-grid">
+  <div class="card">
+    <h2>Profile wydajnosci alternatyw</h2>
+    <img src="data:image/png;base64,{{ radar_chart_b64 }}" alt="Wykres radarowy profili alternatyw" class="chart-img">
+  </div>
+  {% if gaia_plane_b64 %}
+  <div class="card">
+    <h2>Plaszczyzna GAIA</h2>
+    <img src="data:image/png;base64,{{ gaia_plane_b64 }}" alt="Plaszczyzna GAIA -- geometryczna interpretacja PROMETHEE" class="chart-img">
+  </div>
+  {% endif %}
+</div>
+
 {% for name, result in results.items() %}
 <h2>{{ name }}</h2>
 <table class="data-table">
