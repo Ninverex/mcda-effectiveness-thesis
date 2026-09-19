@@ -178,6 +178,30 @@ def test_results_page_shows_all_methods(client):
         assert method.encode("utf-8") in response.data
 
 
+def test_export_pdf_returns_valid_pdf(client):
+    _load_example(client)
+    response = client.get("/problem/results/export/pdf")
+    assert response.status_code == 200
+    assert response.content_type == "application/pdf"
+    assert response.data[:4] == b"%PDF"
+    assert "attachment" in response.headers.get("Content-Disposition", "")
+
+
+def test_export_excel_returns_valid_workbook(client):
+    _load_example(client)
+    response = client.get("/problem/results/export/excel")
+    assert response.status_code == 200
+    assert "spreadsheetml" in response.content_type
+    assert response.data[:2] == b"PK"
+    assert "attachment" in response.headers.get("Content-Disposition", "")
+
+
+def test_export_pdf_redirects_without_loaded_problem(client):
+    response = client.get("/problem/results/export/pdf", follow_redirects=True)
+    assert response.status_code == 200
+    assert "Wybierz przykladowy problem".encode("utf-8") in response.data
+
+
 def test_rank_reversal_simulation(client):
     _load_example(client)
     response = client.post(
