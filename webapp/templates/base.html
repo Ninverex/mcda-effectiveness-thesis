@@ -12,6 +12,7 @@
       <a class="brand" href="{{ url_for('main.index') }}">MCDM Toolkit</a>
       <nav>
         <a href="{{ url_for('main.index') }}">Start</a>
+        <a href="{{ url_for('main.compare') }}">Porownaj</a>
         {% if session.get('problem') %}
         <a href="{{ url_for('main.problem_detail') }}">Problem</a>
         <a href="{{ url_for('main.ahp_pairwise') }}">AHP (parami)</a>

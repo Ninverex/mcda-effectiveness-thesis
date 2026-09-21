@@ -138,3 +138,13 @@ select, input[type=text], input[type=file] {
 .diff-table .diff-row-changed td { color: var(--warning-text); }
 .diff-table .diff-row-unchanged { background: var(--success-bg); }
 .diff-table .diff-row-unchanged td { color: var(--success-text); }
+
+.compare-grid {
+  display: grid;
+  grid-template-columns: repeat(2, 1fr);
+  gap: 20px;
+}
+.compare-results { margin-top: 28px; align-items: start; }
+@media (max-width: 720px) {
+  .compare-grid { grid-template-columns: 1fr; }
+}
