@@ -111,3 +111,45 @@ def test_topsis_rejects_missing_values():
     )
     with pytest.raises(ValidationError):
         validate_decision_problem(problem)
+
+
+# ----------------------------------------------------------------------
+# Przypadki brzegowe: zabezpieczenia przed dzieleniem przez zero
+# ----------------------------------------------------------------------
+
+def test_topsis_handles_all_zero_column_without_error():
+    """Kolumna kryterium z samymi zerami dawalaby dzielenie przez 0
+    przy normalizacji wektorowej (norm_denominator=0) -- kod ma na to
+    zabezpieczenie (1e-12 zamiast 0)."""
+    problem = DecisionProblem(
+        matrix=[[0, 5], [0, 3], [0, 1]],
+        weights=[0.5, 0.5],
+        directions=["max", "max"],
+        alternative_names=["A", "B", "C"],
+        criterion_names=["K1_zawsze_zero", "K2"],
+    )
+    result = TopsisStrategy().calculate_ranking(problem)
+
+    assert not np.any(np.isnan(result.scores))
+    assert not np.any(np.isinf(result.scores))
+    # Skoro K1 nie roznicuje alternatyw, ranking powinien odzwierciedlac
+    # wylacznie K2 -- alternatywa A (najwyzsza wartosc K2) powinna wygrac.
+    assert result.as_ordered_names()[0] == "A"
+
+
+def test_topsis_handles_identical_alternatives_without_error():
+    """Gdy wszystkie alternatywy sa identyczne, D+ i D- sa rowne zero
+    dla kazdej z nich (denom=0) -- zabezpieczenie 1e-12 powinno dac
+    dobrze zdefiniowany (nie NaN) wynik, prawdopodobnie remis."""
+    problem = DecisionProblem(
+        matrix=[[5, 5], [5, 5], [5, 5]],
+        weights=[0.5, 0.5],
+        directions=["max", "max"],
+        alternative_names=["A", "B", "C"],
+        criterion_names=["K1", "K2"],
+    )
+    result = TopsisStrategy().calculate_ranking(problem)
+
+    assert not np.any(np.isnan(result.scores))
+    # Identyczne alternatywy -> identyczne wyniki (remis)
+    np.testing.assert_allclose(result.scores, result.scores[0])
