@@ -92,3 +92,50 @@ def test_ahp_ranking_on_domain_example():
     np.testing.assert_allclose(
         result.intermediate["criteria_weights"], problem.weights
     )
+
+
+# ----------------------------------------------------------------------
+# Przypadki brzegowe: zabezpieczenia przed dzieleniem przez zero
+# ----------------------------------------------------------------------
+
+def test_ahp_single_criterion_gives_zero_consistency_index():
+    """Dla n=1 kryterium wspolczynnik CI nie jest zdefiniowany
+    matematycznie (dzielenie przez n-1=0) -- kod ma na to
+    zabezpieczenie i zwraca CI=0.0 (macierz 1x1 jest trywialnie spojna)."""
+    result = AhpStrategy.compute_consistency(np.array([[1.0]]))
+    assert result["CI"] == 0.0
+    assert result["CR"] == 0.0
+    assert bool(result["consistent"]) is True
+
+
+def test_ahp_handles_all_zero_column_in_synthesis_without_error():
+    """Kolumna kryterium typu 'max' z samymi zerami dawalaby dzielenie
+    przez 0 przy normalizacji kolumnowej (suma=0) -- zabezpieczenie
+    1e-12 powinno dac dobrze zdefiniowany wynik."""
+    problem = DecisionProblem(
+        matrix=[[0, 5], [0, 3], [0, 1]],
+        weights=[0.5, 0.5],
+        directions=["max", "max"],
+        alternative_names=["A", "B", "C"],
+        criterion_names=["K1_zawsze_zero", "K2"],
+    )
+    result = AhpStrategy().calculate_ranking(problem)
+
+    assert not np.any(np.isnan(result.scores))
+    assert not np.any(np.isinf(result.scores))
+
+
+def test_ahp_handles_all_zero_column_for_min_direction_without_error():
+    """Analogicznie dla kryterium typu 'min' -- odwrocenie (1/x) kolumny
+    samych zer dawaloby dzielenie przez 0 (obsluzone przez np.where)."""
+    problem = DecisionProblem(
+        matrix=[[0, 5], [0, 3], [0, 1]],
+        weights=[0.5, 0.5],
+        directions=["min", "max"],
+        alternative_names=["A", "B", "C"],
+        criterion_names=["K1_zawsze_zero", "K2"],
+    )
+    result = AhpStrategy().calculate_ranking(problem)
+
+    assert not np.any(np.isnan(result.scores))
+    assert not np.any(np.isinf(result.scores))
