@@ -101,3 +101,26 @@ def test_electre_kernel_is_subset_of_alternatives():
     assert len(kernel) >= 1
     assert set(kernel).issubset(set(range(problem.n_alternatives)))
     assert len(result.ranking) == problem.n_alternatives
+
+
+def test_electre_handles_zero_range_criterion_without_error():
+    """Kryterium, na ktorym wszystkie alternatywy maja identyczna
+    wartosc (rozstep = 0), dawaloby dzielenie przez 0 przy liczeniu
+    znormalizowanej niezgodnosci -- kod ma na to zabezpieczenie
+    (1e-12 zamiast 0). Takie kryterium nie powinno w ogole wplywac
+    na wynik (skoro nikt nie jest na nim gorszy od nikogo)."""
+    problem = DecisionProblem(
+        matrix=[[5, 1], [5, 4], [5, 9]],
+        weights=[0.5, 0.5],
+        directions=["max", "max"],
+        alternative_names=["A", "B", "C"],
+        criterion_names=["K1_stale", "K2"],
+        thresholds={"q": [0, 0], "v": [None, None]},
+    )
+    result = ElectreIStrategy().calculate_ranking(problem)
+
+    assert not np.any(np.isnan(result.intermediate["discordance"]))
+    assert not np.any(np.isinf(result.intermediate["discordance"]))
+    # K1 jest identyczne dla wszystkich -> nie generuje niezgodnosci;
+    # ranking powinien odzwierciedlac wylacznie K2 (C ma najwyzsza wartosc)
+    assert result.as_ordered_names()[0] == "C"
