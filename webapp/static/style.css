@@ -1,150 +1,297 @@
+/* ------------------------------------------------------------------
+   MCDM Toolkit -- design tokens
+   Paleta i typografia dobrane do charakteru narzedzia analitycznego
+   (precyzja, dane liczbowe, inzynieria) zamiast domyslnego wygladu
+   "SaaS dashboard". Teal nawiazuje tez do domeny przykladow
+   (infrastruktura srodowiskowa / oczyszczanie sciekow).
+   ------------------------------------------------------------------ */
 :root {
-  --bg: #f5f6fb;
-  --card-bg: #ffffff;
-  --text: #1f2430;
-  --muted: #6b7280;
-  --accent: #4c5fe0;
-  --accent-dark: #3f50c9;
-  --border: #e2e5f1;
-  --success-bg: #e7f7ee;
-  --success-text: #1c7a44;
-  --error-bg: #fdeaea;
-  --error-text: #b3261e;
-  --warning-bg: #fff6e0;
-  --warning-text: #8a6d1f;
+  --ink: #132a3a;
+  --ink-soft: #3d5266;
+  --paper: #eef1f3;
+  --surface: #ffffff;
+  --accent: #1e6e5c;
+  --accent-deep: #123f35;
+  --accent-wash: #e4efec;
+  --border: #d6dad2;
+  --muted: #5b6b70;
+
+  --success-bg: #e4f4ec;
+  --success-text: #1b6b42;
+  --error-bg: #fbeae8;
+  --error-text: #a63d2c;
+  --warning-bg: #fbf1e1;
+  --warning-text: #93591a;
+
+  --font-display: "Fraunces", "Iowan Old Style", Georgia, serif;
+  --font-body: "IBM Plex Sans", -apple-system, BlinkMacSystemFont, sans-serif;
+  --font-mono: "IBM Plex Mono", ui-monospace, SFMono-Regular, Menlo, monospace;
 }
 
 * { box-sizing: border-box; }
 
 body {
   margin: 0;
-  font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
-  background: var(--bg);
-  color: var(--text);
-  line-height: 1.5;
+  font-family: var(--font-body);
+  background: var(--paper);
+  color: var(--ink);
+  line-height: 1.55;
+  -webkit-font-smoothing: antialiased;
 }
 
-.topbar { background: var(--accent); color: #fff; }
+a { color: var(--accent-deep); }
+a:hover { color: var(--accent); }
+
+:focus-visible {
+  outline: 2px solid var(--accent);
+  outline-offset: 2px;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  * { transition: none !important; }
+}
+
+/* ------------------------------------------------------------------
+   Nawigacja -- jedyny mocny akcent koloru w calym interfejsie;
+   reszta strony pozostaje stonowana (jasny papier, plaskie karty).
+   ------------------------------------------------------------------ */
+.topbar { background: var(--ink); }
 .topbar-inner {
-  max-width: 960px;
+  max-width: 900px;
   margin: 0 auto;
-  padding: 14px 24px;
+  padding: 16px 24px;
   display: flex;
   align-items: center;
   justify-content: space-between;
   flex-wrap: wrap;
   gap: 8px;
 }
-.brand { color: #fff; font-weight: 600; text-decoration: none; font-size: 18px; }
-.topbar nav a {
-  color: #dfe3ff;
+.brand {
+  color: #fff;
+  font-family: var(--font-display);
+  font-weight: 600;
+  font-size: 19px;
   text-decoration: none;
-  margin-left: 18px;
-  font-size: 14px;
+  letter-spacing: 0.01em;
 }
-.topbar nav a:hover { color: #fff; }
+.topbar nav a {
+  color: #b9c6cc;
+  text-decoration: none;
+  margin-left: 20px;
+  font-size: 14px;
+  padding-bottom: 3px;
+  border-bottom: 1px solid transparent;
+}
+.topbar nav a:hover {
+  color: #fff;
+  border-bottom-color: var(--accent);
+}
 
-.container { max-width: 960px; margin: 0 auto; padding: 24px; }
+.container { max-width: 900px; margin: 0 auto; padding: 40px 24px; }
 
-h1 { font-size: 24px; margin-bottom: 4px; }
-h2 { font-size: 18px; margin-top: 32px; margin-bottom: 10px; }
-.lead, .muted { color: var(--muted); }
+/* ------------------------------------------------------------------
+   Typografia -- serif display na naglowkach (nadaje cieza akademicka
+   wlasciwa pracy inzynierskiej), sans na tresci UI.
+   ------------------------------------------------------------------ */
+h1 {
+  font-family: var(--font-display);
+  font-weight: 500;
+  font-size: 32px;
+  line-height: 1.2;
+  margin: 0 0 14px;
+  color: var(--ink);
+}
+h1::after {
+  content: "";
+  display: block;
+  width: 46px;
+  height: 3px;
+  background: var(--accent);
+  margin-top: 14px;
+}
+h2 {
+  font-family: var(--font-display);
+  font-weight: 500;
+  font-size: 21px;
+  margin: 36px 0 12px;
+  color: var(--ink);
+}
+h3 {
+  font-family: var(--font-body);
+  font-weight: 600;
+  font-size: 15px;
+  margin: 0 0 10px;
+  color: var(--ink);
+}
+.lead {
+  font-size: 16px;
+  color: var(--ink-soft);
+  max-width: 62ch;
+}
+.muted { color: var(--muted); }
+code {
+  font-family: var(--font-mono);
+  font-size: 0.92em;
+  background: var(--accent-wash);
+  padding: 1px 5px;
+  border-radius: 3px;
+}
 
+/* ------------------------------------------------------------------
+   Karty -- plaskie, z cienka ramka, bez cienia i bez jednolitego
+   promienia-na-wszystkim (odejscie od "SaaS card kit").
+   ------------------------------------------------------------------ */
 .card-grid {
   display: grid;
-  grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
-  gap: 16px;
-  margin: 20px 0;
+  grid-template-columns: repeat(auto-fit, minmax(230px, 1fr));
+  gap: 14px;
+  margin: 22px 0;
 }
 .card {
-  background: var(--card-bg);
+  background: var(--surface);
   border: 1px solid var(--border);
-  border-radius: 12px;
-  padding: 18px;
-  margin-bottom: 16px;
+  border-radius: 4px;
+  padding: 20px;
+  margin-bottom: 14px;
 }
-.card-active { border-color: var(--accent); }
+.card-active { border-color: var(--accent); border-width: 1px; }
 
+/* ------------------------------------------------------------------
+   Przyciski -- plaskie, bez cienia, wyrazne stany hover/focus.
+   ------------------------------------------------------------------ */
 .btn {
   display: inline-block;
-  padding: 8px 16px;
-  border-radius: 8px;
-  border: none;
+  padding: 9px 18px;
+  border-radius: 4px;
+  border: 1px solid transparent;
+  font-family: var(--font-body);
   font-size: 14px;
+  font-weight: 500;
   cursor: pointer;
   text-decoration: none;
+  transition: background-color 120ms ease, border-color 120ms ease;
 }
 .btn-primary { background: var(--accent); color: #fff; }
-.btn-primary:hover { background: var(--accent-dark); }
-.btn-secondary { background: #eef0fc; color: var(--accent-dark); }
-.btn-outline { background: transparent; border: 1px solid var(--border); color: var(--text); }
+.btn-primary:hover { background: var(--accent-deep); color: #fff; }
+.btn-secondary { background: var(--accent-wash); color: var(--accent-deep); }
+.btn-secondary:hover { background: #d6e7e2; }
+.btn-outline { background: transparent; border-color: var(--border); color: var(--ink); }
+.btn-outline:hover { border-color: var(--ink-soft); }
 
+/* ------------------------------------------------------------------
+   Tabele danych -- liczby w krojach tabularnych (mono) dla latwego
+   porownywania kolumn wynikow/wag; nie jest to dekoracja, tylko
+   wyrownanie cyfr w tabeli danych liczbowych.
+   ------------------------------------------------------------------ */
 .data-table {
   width: 100%;
   border-collapse: collapse;
   margin-top: 8px;
-  background: var(--card-bg);
-  border-radius: 8px;
+  background: var(--surface);
+  border: 1px solid var(--border);
+  border-radius: 4px;
   overflow: hidden;
 }
 .data-table th, .data-table td {
-  padding: 8px 12px;
+  padding: 9px 14px;
   border-bottom: 1px solid var(--border);
   text-align: left;
   font-size: 14px;
 }
-.data-table th { background: #eef0fc; font-weight: 600; }
+.data-table tbody tr:last-child td { border-bottom: none; }
+.data-table th {
+  background: var(--ink);
+  color: #fff;
+  font-weight: 500;
+  font-size: 13px;
+}
+.data-table .num {
+  font-family: var(--font-mono);
+  font-variant-numeric: tabular-nums;
+}
 .row-inactive { opacity: 0.5; }
 
+/* ------------------------------------------------------------------
+   Odznaki (badge) -- pigulki informacyjne, celowo rozne od kart
+   (odmienny ksztalt = odmienna funkcja: status, nie tresc).
+   ------------------------------------------------------------------ */
 .badge {
   display: inline-block;
-  padding: 6px 12px;
+  padding: 6px 14px;
   border-radius: 999px;
   font-size: 13px;
   font-weight: 500;
-  margin: 12px 0;
+  margin: 14px 0;
 }
 .badge-success { background: var(--success-bg); color: var(--success-text); }
 .badge-error { background: var(--error-bg); color: var(--error-text); }
 .badge-warning { background: var(--warning-bg); color: var(--warning-text); }
 
-.flash-stack { margin-bottom: 20px; }
-.flash { padding: 10px 14px; border-radius: 8px; margin-bottom: 8px; font-size: 14px; }
+.flash-stack { margin-bottom: 22px; }
+.flash { padding: 11px 16px; border-radius: 4px; margin-bottom: 8px; font-size: 14px; }
 .flash-success { background: var(--success-bg); color: var(--success-text); }
 .flash-error { background: var(--error-bg); color: var(--error-text); }
 
-form label { display: block; margin-bottom: 12px; font-size: 14px; }
+/* ------------------------------------------------------------------
+   Formularze
+   ------------------------------------------------------------------ */
+form label { display: block; margin-bottom: 14px; font-size: 14px; color: var(--ink-soft); }
 select, input[type=text], input[type=file] {
-  padding: 6px 10px;
-  border-radius: 6px;
+  font-family: var(--font-body);
+  padding: 7px 10px;
+  border-radius: 4px;
   border: 1px solid var(--border);
+  background: var(--surface);
+  color: var(--ink);
   margin-left: 8px;
 }
+select:focus, input:focus { border-color: var(--accent); }
 
-.actions { margin-top: 20px; display: flex; gap: 12px; flex-wrap: wrap; }
+.actions { margin: 22px 0; display: flex; gap: 10px; flex-wrap: wrap; }
 
-.footer { text-align: center; padding: 24px; color: var(--muted); font-size: 13px; }
+.footer {
+  text-align: left;
+  padding: 28px 0 40px;
+  color: var(--muted);
+  font-size: 13px;
+  border-top: 1px solid var(--border);
+  margin-top: 20px;
+}
+.footer .container { padding-top: 20px; padding-bottom: 0; }
 
+/* ------------------------------------------------------------------
+   Siatki wykresow i porownania side-by-side
+   ------------------------------------------------------------------ */
 .chart-grid {
   display: grid;
   grid-template-columns: repeat(auto-fit, minmax(320px, 1fr));
-  gap: 16px;
+  gap: 14px;
   margin-bottom: 8px;
 }
-.chart-img { width: 100%; height: auto; border-radius: 8px; display: block; }
+.chart-img {
+  width: 100%;
+  height: auto;
+  border: 1px solid var(--border);
+  border-radius: 4px;
+  display: block;
+  background: var(--surface);
+}
 
+.compare-grid {
+  display: grid;
+  grid-template-columns: repeat(2, 1fr);
+  gap: 22px;
+}
+.compare-results { margin-top: 32px; align-items: start; }
+@media (max-width: 720px) {
+  .compare-grid { grid-template-columns: 1fr; }
+}
+
+/* ------------------------------------------------------------------
+   Raport roznicowy (rank reversal) -- generowany jako HTML z Pythona
+   ------------------------------------------------------------------ */
 .diff-table .diff-row-removed { color: var(--muted); text-decoration: line-through; }
 .diff-table .diff-row-changed { background: var(--warning-bg); }
 .diff-table .diff-row-changed td { color: var(--warning-text); }
 .diff-table .diff-row-unchanged { background: var(--success-bg); }
 .diff-table .diff-row-unchanged td { color: var(--success-text); }
-
-.compare-grid {
-  display: grid;
-  grid-template-columns: repeat(2, 1fr);
-  gap: 20px;
-}
-.compare-results { margin-top: 28px; align-items: start; }
-@media (max-width: 720px) {
-  .compare-grid { grid-template-columns: 1fr; }
-}
