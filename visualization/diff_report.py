@@ -50,8 +50,8 @@ def build_diff_html_table(report: RankReversalReport) -> str:
         rows_html.append(
             f'<tr class="{row_class}">'
             f"<td>{name}</td>"
-            f"<td>{before}</td>"
-            f"<td>{after_display}</td>"
+            f'<td class="num">{before}</td>'
+            f'<td class="num">{after_display}</td>'
             f"<td>{change_display}</td>"
             f"</tr>"
         )

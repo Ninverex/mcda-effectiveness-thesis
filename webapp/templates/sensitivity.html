@@ -1,0 +1,35 @@
+{% extends "base.html" %}
+{% block title %}Analiza wrazliwosci{% endblock %}
+{% block content %}
+<h1>Analiza wrazliwosci na zmiany wag</h1>
+<p class="muted">Sprawdza, czy lider rankingu zmienia sie, gdy waga wybranego kryterium jest przesuwana w zakresie &plusmn;0.2.</p>
+
+<form method="post">
+  <label>Metoda:
+    <select name="method">
+      {% for m in methods %}<option value="{{ m }}">{{ m }}</option>{% endfor %}
+    </select>
+  </label>
+  <label>Kryterium:
+    <select name="criterion">
+      {% for c in problem.criterion_names %}<option value="{{ c }}">{{ c }}</option>{% endfor %}
+    </select>
+  </label>
+  <button type="submit" class="btn btn-primary">Uruchom analize</button>
+</form>
+
+{% if report %}
+<div class="badge {{ 'badge-success' if report.is_stable() else 'badge-warning' }}">
+  {{ "Lider rankingu stabilny w calym zakresie" if report.is_stable() else "Lider rankingu zmienia sie w zaleznosci od wagi" }}
+</div>
+
+<table class="data-table">
+  <thead><tr><th>Delta wagi</th><th>Lider rankingu</th></tr></thead>
+  <tbody>
+    {% for p in report.points %}
+    <tr><td class="num">{{ "%+.2f"|format(p.delta) }}</td><td>{{ p.ranking_names[0] }}</td></tr>
+    {% endfor %}
+  </tbody>
+</table>
+{% endif %}
+{% endblock %}

@@ -33,12 +33,12 @@
   <thead><tr><th>Kryterium</th><th>Waga</th></tr></thead>
   <tbody>
     {% for c, w in zip(problem.criterion_names, result.weights.tolist()) %}
-    <tr><td>{{ c }}</td><td>{{ "%.4f"|format(w) }}</td></tr>
+    <tr><td>{{ c }}</td><td class="num">{{ "%.4f"|format(w) }}</td></tr>
     {% endfor %}
   </tbody>
 </table>
 
-<p>CI (wskaznik spojnosci) = {{ "%.4f"|format(result.CI) }} &nbsp;&middot;&nbsp; CR (wspolczynnik spojnosci) = {{ "%.4f"|format(result.CR) }}</p>
+<p>CI (wskaznik spojnosci) = <span class="num">{{ "%.4f"|format(result.CI) }}</span>, CR (wspolczynnik spojnosci) = <span class="num">{{ "%.4f"|format(result.CR) }}</span></p>
 
 {% if result.consistent %}
 <div class="badge badge-success">Osady sa spojne (CR &le; 0.10) -- mozna uzyc tych wag</div>

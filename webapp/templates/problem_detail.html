@@ -19,7 +19,7 @@
     {% for name, row, active in rows %}
     <tr class="{{ '' if active else 'row-inactive' }}">
       <td>{{ name }}</td>
-      {% for v in row %}<td>{{ "%.2f"|format(v) }}</td>{% endfor %}
+      {% for v in row %}<td class="num">{{ "%.2f"|format(v) }}</td>{% endfor %}
       <td>{{ "tak" if active else "nie" }}</td>
     </tr>
     {% endfor %}
@@ -33,7 +33,7 @@
     {% for c, w, d in zip(problem.criterion_names, problem.weights.tolist(), problem.directions) %}
     <tr>
       <td>{{ c }}</td>
-      <td>{{ "%.3f"|format(w) }}</td>
+      <td class="num">{{ "%.3f"|format(w) }}</td>
       <td>{{ "zysk (max)" if d == "max" else "koszt (min)" }}</td>
     </tr>
     {% endfor %}
