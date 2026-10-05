@@ -15,6 +15,7 @@ wykrywa nieporownywalnosc w przypadku symetrycznym.
 """
 
 import numpy as np
+import pytest
 
 from mcdm.models.decision_problem import DecisionProblem
 from mcdm.strategies.promethee import PrometheeStrategy
@@ -95,3 +96,72 @@ def test_promethee_on_domain_example_returns_full_ranking():
         result.intermediate["phi_plus"] - result.intermediate["phi_minus"],
         result.scores,
     )
+
+
+def test_promethee_handles_zero_variance_criterion_without_error():
+    """Kryterium, na ktorym wszystkie alternatywy maja identyczna
+    wartosc (span=0, wiec domyslny prog p byloby zerowe) -- kod ma
+    zabezpieczenie (p = max(..., q + 1e-9)). Takie kryterium nie
+    powinno roznicowac alternatyw."""
+    problem = DecisionProblem(
+        matrix=[[5, 1], [5, 4], [5, 9]],
+        weights=[0.5, 0.5],
+        directions=["max", "max"],
+        alternative_names=["A", "B", "C"],
+        criterion_names=["K1_stale", "K2"],
+    )
+    result = PrometheeStrategy().calculate_ranking(problem)
+    assert not np.any(np.isnan(result.scores))
+    assert not np.any(np.isinf(result.scores))
+    assert result.as_ordered_names()[0] == "C"
+
+
+def test_promethee_minimal_two_alternatives():
+    """Przypadek brzegowy m=2 (minimalna liczba alternatyw wg WN1) --
+    dzielenie przez (m-1)=1 w przeplywach nie powinno sprawiac problemow."""
+    problem = DecisionProblem(
+        matrix=[[1, 5], [3, 2]],
+        weights=[0.5, 0.5],
+        directions=["max", "max"],
+        alternative_names=["A", "B"],
+        criterion_names=["K1", "K2"],
+    )
+    result = PrometheeStrategy().calculate_ranking(problem)
+    assert len(result.ranking) == 2
+    assert not np.any(np.isnan(result.scores))
+    assert result.scores[0] == pytest.approx(-result.scores[1])
+
+
+def test_unicriterion_net_flows_has_correct_shape():
+    problem = DecisionProblem.from_json(
+        f"{EXAMPLES_DIR}/sewage_network_variants.json"
+    )
+    strategy = PrometheeStrategy()
+    flows = strategy.unicriterion_net_flows(problem)
+    assert flows.shape == (problem.n_alternatives, problem.n_criteria)
+    assert not np.any(np.isnan(flows))
+
+
+def test_unicriterion_net_flows_values_are_bounded():
+    """Kazdy jednokryterialny przeplyw netto musi miescic sie w [-1, 1]
+    (to srednia roznic preferencji, ktore same sa w [-1, 1])."""
+    problem = DecisionProblem.from_json(
+        f"{EXAMPLES_DIR}/sewage_network_variants.json"
+    )
+    flows = PrometheeStrategy().unicriterion_net_flows(problem)
+    assert np.all(flows >= -1.0)
+    assert np.all(flows <= 1.0)
+
+
+def test_unicriterion_net_flows_weighted_sum_matches_phi_net():
+    """Zagregowany Phi_net z calculate_ranking() powinien odpowiadac
+    wazonej sumie jednokryterialnych przeplywow z unicriterion_net_flows()
+    -- to dokladnie definiuje relacje miedzy PROMETHEE a GAIA."""
+    problem = DecisionProblem.from_json(
+        f"{EXAMPLES_DIR}/sewage_network_variants.json"
+    )
+    strategy = PrometheeStrategy()
+    result = strategy.calculate_ranking(problem)
+    flows = strategy.unicriterion_net_flows(problem)
+    reconstructed_phi_net = flows @ problem.weights
+    np.testing.assert_allclose(reconstructed_phi_net, result.scores, atol=1e-9)
