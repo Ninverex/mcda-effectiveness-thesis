@@ -2,7 +2,7 @@
 Implementacja metody TOPSIS
 (Technique for Order Preference by Similarity to Ideal Solution).
 
-Kroki:
+Kroki (zgodnie z 3.3 w spisie tresci pracy):
 1. Normalizacja wektorowa macierzy decyzyjnej.
 2. Wazenie znormalizowanej macierzy.
 3. Wyznaczenie rozwiazania idealnego (PIS) i anty-idealnego (NIS)
@@ -10,6 +10,8 @@ Kroki:
 4. Obliczenie odleglosci euklidesowych D+ i D- do PIS/NIS.
 5. Wskaznik bliskosci C_i = D_i- / (D_i+ + D_i-).
 
+Referencja: Hwang, C.L., Yoon, K. "Multiple attribute decision
+making: an introduction.", 1995 -- pozycja z bibliografii pracy.
 """
 
 from __future__ import annotations
@@ -17,6 +19,7 @@ from __future__ import annotations
 import numpy as np
 
 from mcdm.models.decision_problem import DecisionProblem
+from mcdm.numeric_utils import safe_denominator, safe_divide
 from mcdm.strategies.base import ICalculationStrategy, RankingResult
 
 
@@ -31,8 +34,7 @@ class TopsisStrategy(ICalculationStrategy):
 
         # 1. Normalizacja wektorowa: r_ij = x_ij / sqrt(sum_i x_ij^2)
         norm_denominator = np.sqrt(np.sum(X ** 2, axis=0))
-        norm_denominator[norm_denominator == 0] = 1e-12  # unik dzielenia przez 0
-        R = X / norm_denominator
+        R = X / safe_denominator(norm_denominator)  # unik dzielenia przez 0
 
         # 2. Wazenie: v_ij = w_j * r_ij
         V = R * w
@@ -53,9 +55,7 @@ class TopsisStrategy(ICalculationStrategy):
         d_minus = np.sqrt(np.sum((V - nis) ** 2, axis=1))
 
         # 5. Wskaznik bliskosci wzgledem rozwiazania idealnego
-        denom = d_plus + d_minus
-        denom[denom == 0] = 1e-12
-        closeness = d_minus / denom
+        closeness = safe_divide(d_minus, d_plus + d_minus)
 
         ranking = list(np.argsort(-closeness))  # malejaco: najlepszy pierwszy
 

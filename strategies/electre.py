@@ -36,6 +36,7 @@ from __future__ import annotations
 import numpy as np
 
 from mcdm.models.decision_problem import DecisionProblem
+from mcdm.numeric_utils import safe_denominator
 from mcdm.strategies.base import ICalculationStrategy, RankingResult
 
 
@@ -76,8 +77,7 @@ class ElectreIStrategy(ICalculationStrategy):
             G[:, j] = X[:, j] if direction == "max" else -X[:, j]
 
         # Rozpietosc kazdego kryterium -- do normalizacji niezgodnosci
-        ranges = G.max(axis=0) - G.min(axis=0)
-        ranges[ranges == 0] = 1e-12
+        ranges = safe_denominator(G.max(axis=0) - G.min(axis=0))
 
         concordance = np.zeros((m, m))
         discordance = np.zeros((m, m))
