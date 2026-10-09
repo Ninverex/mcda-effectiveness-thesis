@@ -17,7 +17,7 @@ import numpy as np
 import pytest
 
 from mcdm.models.decision_problem import DecisionProblem
-from mcdm.strategies.ahp import AhpStrategy, CR_THRESHOLD
+from mcdm.strategies.ahp import AhpStrategy, CR_THRESHOLD, ConsistencyWarning
 
 EXAMPLES_DIR = "data/examples"
 
@@ -53,6 +53,27 @@ def test_ahp_detects_inconsistent_judgments():
 
     assert bool(result["consistent"]) is False
     assert result["CR"] > CR_THRESHOLD
+
+
+def test_ahp_warns_on_inconsistency_by_default():
+    """Domyslnie (raise_on_inconsistency=False) obliczenia nie sa
+    blokowane, ale przekroczenie CR>0.10 musi byc zasygnalizowane
+    przez ConsistencyWarning (PU2) -- a nie po cichu pominiete, jak
+    to bylo przed poprawka (klasa ConsistencyWarning istniala, ale
+    nigdy nie byla faktycznie zglaszana)."""
+    problem = DecisionProblem(
+        matrix=[[1, 2, 3], [3, 4, 1], [5, 1, 2]],
+        weights=[1 / 3, 1 / 3, 1 / 3],
+        directions=["max", "max", "max"],
+        alternative_names=["A", "B", "C"],
+        criterion_names=["K1", "K2", "K3"],
+    )
+    strategy = AhpStrategy(pairwise_criteria_matrix=INCONSISTENT_MATRIX)
+
+    with pytest.warns(ConsistencyWarning):
+        result = strategy.calculate_ranking(problem)
+
+    assert bool(result.intermediate["consistency_ok"]) is False
 
 
 def test_ahp_raises_when_configured_to_reject_inconsistency():

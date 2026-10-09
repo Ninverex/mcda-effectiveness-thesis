@@ -30,9 +30,12 @@ Kroki (3.2 w spisie tresci):
 
 from __future__ import annotations
 
+import warnings
+
 import numpy as np
 
 from mcdm.models.decision_problem import DecisionProblem
+from mcdm.numeric_utils import safe_denominator, safe_divide
 from mcdm.strategies.base import ICalculationStrategy, RankingResult
 
 
@@ -87,6 +90,13 @@ class AhpStrategy(ICalculationStrategy):
                 )
                 if self.raise_on_inconsistency:
                     raise ValueError(message)
+                # Domyslnie (raise_on_inconsistency=False) obliczenia nie sa
+                # blokowane (PU2 pozwala uzytkownikowi swiadomie je
+                # kontynuowac), ale ostrzezenie musi byc widoczne -- do tej
+                # pory klasa ConsistencyWarning istniala, lecz nigdy nie byla
+                # faktycznie zgloszona przez warnings.warn, wiec przekroczenie
+                # CR przechodzilo bez sladu poza intermediate["consistency_ok"].
+                warnings.warn(message, ConsistencyWarning, stacklevel=2)
         else:
             # Wagi juz wyznaczone (np. wprost z problem.weights) --
             # brak macierzy porownan parami do liczenia CI/CR.
@@ -101,14 +111,10 @@ class AhpStrategy(ICalculationStrategy):
         for j, direction in enumerate(directions):
             col = X[:, j]
             if direction == "max":
-                total = col.sum()
-                total = total if total != 0 else 1e-12
-                normalized[:, j] = col / total
+                normalized[:, j] = safe_divide(col, col.sum())
             else:  # "min" -- odwracamy tak, by wieksza wartosc = lepsza
-                inv = 1.0 / np.where(col == 0, 1e-12, col)
-                total = inv.sum()
-                total = total if total != 0 else 1e-12
-                normalized[:, j] = inv / total
+                inv = 1.0 / safe_denominator(col)
+                normalized[:, j] = safe_divide(inv, inv.sum())
 
         # Synteza: wazona suma priorytetow
         scores = normalized @ weights
