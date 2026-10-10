@@ -13,20 +13,9 @@ danych wejsciowych (macierz X, kierunki optymalizacji) co TOPSIS,
 PROMETHEE i ELECTRE -- co jest kluczowe dla eksperymentow
 porownawczych w rozdziale 4 pracy. Pelny "klasyczny" AHP z
 macierzami porownan parami alternatyw jest tez dostepny przez
-metode `rank_from_pairwise_matrices`, gdyby promotor wymagal
-scislejszej wiernosci oryginalnej metodzie Saaty'ego.
+metode `rank_from_pairwise_matrices`.
 
-Kroki (3.2 w spisie tresci):
-1. Macierz porownan parami kryteriow A (n x n), A[i,j] = waznosc
-   kryterium i wzgledem j w skali Saaty'ego 1-9 (lub 1/1..1/9).
-2. Wektor wag = znormalizowany glowny wektor wlasny A (odpowiadajacy
-   najwiekszej wartosci wlasnej lambda_max).
-3. CI = (lambda_max - n) / (n - 1).
-4. CR = CI / RI, gdzie RI to losowy indeks spojnosci Saaty'ego.
-5. Jesli CR > 0.10 -> ostrzezenie o braku spojnosci osadow (PU2).
-6. Ranking koncowy: wazona suma znormalizowanych ocen alternatyw
-   (klasyczna synteza addytywna AHP).
-"""
+
 
 from __future__ import annotations
 
