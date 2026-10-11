@@ -91,8 +91,43 @@ def test_n_criteria_matches_matrix_columns():
 def test_active_matrix_with_all_inactive_is_empty():
     problem = make_problem(active_mask=[False, False, False])
     assert problem.active_matrix.shape == (0, 2)
-    assert problem.active_names == []
-    assert problem.n_alternatives == 0
+
+
+def test_len_returns_number_of_active_alternatives():
+    """__len__ ma byc rownowazny n_alternatives (tylko aktywne), a nie
+    calkowitej liczbie wierszy macierzy -- tak samo jak reszta API
+    operujacego na aktywnym podzbiorze (active_matrix, active_names)."""
+    problem = make_problem(active_mask=[True, False, True])
+    assert len(problem) == 2
+    assert len(problem) == problem.n_alternatives
+
+
+# ----------------------------------------------------------------------
+# alternative_index / criterion_index
+# ----------------------------------------------------------------------
+
+def test_alternative_index_returns_position_in_alternative_names():
+    problem = make_problem()  # Alt1, Alt2, Alt3
+    assert problem.alternative_index("Alt1") == 0
+    assert problem.alternative_index("Alt3") == 2
+
+
+def test_alternative_index_unknown_name_raises_value_error():
+    problem = make_problem()
+    with pytest.raises(ValueError):
+        problem.alternative_index("Nieistniejaca")
+
+
+def test_criterion_index_returns_position_in_criterion_names():
+    problem = make_problem()  # K1, K2
+    assert problem.criterion_index("K1") == 0
+    assert problem.criterion_index("K2") == 1
+
+
+def test_criterion_index_unknown_name_raises_value_error():
+    problem = make_problem()
+    with pytest.raises(ValueError):
+        problem.criterion_index("Nieistniejace")
 
 
 # ----------------------------------------------------------------------

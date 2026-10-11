@@ -94,6 +94,37 @@ class DecisionProblem:
     def n_criteria(self) -> int:
         return self.matrix.shape[1]
 
+    def __len__(self) -> int:
+        """Liczba AKTYWNYCH alternatyw -- pozwala pisac `len(problem)`
+        zamiast `problem.n_alternatives`, zgodnie z konwencja Pythona
+        dla obiektow reprezentujacych kolekcje (tu: kolekcje alternatyw)."""
+        return self.n_alternatives
+
+    def alternative_index(self, name: str) -> int:
+        """Indeks (w `alternative_names`/`matrix`) alternatywy o podanej
+        nazwie. Podnosi czytelny ValueError zamiast nieprzejrzystego
+        bledu z `list.index`, gdy nazwa nie wystepuje -- ten sam wzorzec
+        sprawdzania/wyszukiwania powtarzal sie dotad niezaleznie w
+        mcdm/evaluation/rank_reversal.py i mcdm/strategies/base.py."""
+        try:
+            return self.alternative_names.index(name)
+        except ValueError:
+            raise ValueError(
+                f"Nieznana alternatywa: '{name}' "
+                f"(dostepne: {self.alternative_names})."
+            ) from None
+
+    def criterion_index(self, name: str) -> int:
+        """Indeks (w `criterion_names`/kolumnach `matrix`) kryterium o
+        podanej nazwie. Analogiczne do `alternative_index` -- patrz tam."""
+        try:
+            return self.criterion_names.index(name)
+        except ValueError:
+            raise ValueError(
+                f"Nieznane kryterium: '{name}' "
+                f"(dostepne: {self.criterion_names})."
+            ) from None
+
     # ------------------------------------------------------------------
     # Konstruktory / serializacja
     # ------------------------------------------------------------------
