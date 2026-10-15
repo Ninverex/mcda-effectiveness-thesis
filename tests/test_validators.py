@@ -13,8 +13,8 @@ wymiarow nazw kryteriow, ujemnych wag czy progow ELECTRE/PROMETHEE.
 import numpy as np
 import pytest
 
-from mcdm.models.decision_problem import DecisionProblem
-from mcdm.validation.validators import ValidationError, validate_decision_problem
+from models.decision_problem import DecisionProblem
+from validation.validators import ValidationError, validate_decision_problem
 
 
 def make_problem(**overrides):

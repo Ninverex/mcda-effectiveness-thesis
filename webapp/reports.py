@@ -35,12 +35,12 @@ from reportlab.platypus import (
     TableStyle,
 )
 
-from mcdm.evaluation.rank_correlation import compare_all_pairs
-from mcdm.models.decision_problem import DecisionProblem
-from mcdm.strategies.base import RankingResult
-from mcdm.visualization._utils import figure_to_png_bytes
-from mcdm.visualization.gaia import plot_gaia_plane
-from mcdm.visualization.radar import plot_radar_chart
+from evaluation.rank_correlation import compare_all_pairs
+from models.decision_problem import DecisionProblem
+from strategies.base import RankingResult
+from visualization._utils import figure_to_png_bytes
+from visualization.gaia import plot_gaia_plane
+from visualization.radar import plot_radar_chart
 
 BRAND_COLOR = colors.HexColor("#4c5fe0")
 ROW_ALT_COLOR = colors.HexColor("#f5f6fb")

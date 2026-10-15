@@ -26,9 +26,9 @@ from __future__ import annotations
 import numpy as np
 from sklearn.decomposition import PCA
 
-from mcdm.models.decision_problem import DecisionProblem
-from mcdm.strategies.promethee import PrometheeStrategy
-from mcdm.visualization._utils import plt
+from models.decision_problem import DecisionProblem
+from strategies.promethee import PrometheeStrategy
+from visualization._utils import plt
 
 
 def plot_gaia_plane(

@@ -4,10 +4,10 @@ Testy jednostkowe dla mcdm/visualization/gaia.py.
 
 import pytest
 
-from mcdm.models.decision_problem import DecisionProblem
-from mcdm.strategies.promethee import PrometheeStrategy
-from mcdm.visualization.gaia import plot_gaia_plane
-from mcdm.visualization._utils import figure_to_base64
+from models.decision_problem import DecisionProblem
+from strategies.promethee import PrometheeStrategy
+from visualization.gaia import plot_gaia_plane
+from visualization._utils import figure_to_base64
 
 EXAMPLES_DIR = "data/examples"
 

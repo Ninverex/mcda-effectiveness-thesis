@@ -5,11 +5,11 @@ Testy jednostkowe dla mcdm/evaluation/.
 import numpy as np
 import pytest
 
-from mcdm.models.decision_problem import DecisionProblem
-from mcdm.strategies import TopsisStrategy, AhpStrategy
-from mcdm.evaluation.rank_correlation import compare_rankings, compare_all_pairs
-from mcdm.evaluation.rank_reversal import simulate_rank_reversal
-from mcdm.evaluation.sensitivity import (
+from models.decision_problem import DecisionProblem
+from strategies import TopsisStrategy, AhpStrategy
+from evaluation.rank_correlation import compare_rankings, compare_all_pairs
+from evaluation.rank_reversal import simulate_rank_reversal
+from evaluation.sensitivity import (
     weight_sensitivity_analysis,
     _perturb_and_renormalize,
 )

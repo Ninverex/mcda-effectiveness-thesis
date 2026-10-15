@@ -14,8 +14,8 @@ from dataclasses import dataclass
 
 import numpy as np
 
-from mcdm.models.decision_problem import DecisionProblem
-from mcdm.strategies.base import ICalculationStrategy, RankingResult
+from models.decision_problem import DecisionProblem
+from strategies.base import ICalculationStrategy, RankingResult
 
 
 @dataclass

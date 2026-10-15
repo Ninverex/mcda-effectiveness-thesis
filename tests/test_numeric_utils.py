@@ -6,7 +6,7 @@ przed dzieleniem przez zero, uzywanego przez TOPSIS i ELECTRE.
 import numpy as np
 import pytest
 
-from mcdm.numeric_utils import DEFAULT_EPSILON, safe_denominator, safe_divide
+from numeric_utils import DEFAULT_EPSILON, safe_denominator, safe_divide
 
 
 # ----------------------------------------------------------------------

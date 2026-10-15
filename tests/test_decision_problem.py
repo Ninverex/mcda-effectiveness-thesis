@@ -12,7 +12,7 @@ i sensitivity -- musi byc nie-mutujace).
 import numpy as np
 import pytest
 
-from mcdm.models.decision_problem import DecisionProblem
+from models.decision_problem import DecisionProblem
 
 EXAMPLES_DIR = "data/examples"
 

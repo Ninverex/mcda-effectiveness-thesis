@@ -35,9 +35,9 @@ from __future__ import annotations
 
 import numpy as np
 
-from mcdm.models.decision_problem import DecisionProblem
-from mcdm.numeric_utils import safe_denominator
-from mcdm.strategies.base import ICalculationStrategy, RankingResult
+from models.decision_problem import DecisionProblem
+from numeric_utils import safe_denominator
+from strategies.base import ICalculationStrategy, RankingResult
 
 
 class ElectreIStrategy(ICalculationStrategy):

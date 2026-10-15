@@ -5,9 +5,9 @@ Testy jednostkowe dla mcdm/visualization/radar.py.
 import numpy as np
 import pytest
 
-from mcdm.models.decision_problem import DecisionProblem
-from mcdm.visualization.radar import normalized_profiles, plot_radar_chart
-from mcdm.visualization._utils import figure_to_base64
+from models.decision_problem import DecisionProblem
+from visualization.radar import normalized_profiles, plot_radar_chart
+from visualization._utils import figure_to_base64
 
 EXAMPLES_DIR = "data/examples"
 

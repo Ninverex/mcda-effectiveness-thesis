@@ -25,8 +25,8 @@ from __future__ import annotations
 
 import numpy as np
 
-from mcdm.models.decision_problem import DecisionProblem
-from mcdm.strategies.base import ICalculationStrategy, RankingResult
+from models.decision_problem import DecisionProblem
+from strategies.base import ICalculationStrategy, RankingResult
 
 
 def _linear_preference(diff: np.ndarray, q: float, p: float) -> np.ndarray:

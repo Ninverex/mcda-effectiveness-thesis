@@ -16,9 +16,9 @@ warstwa walidacji (WN1).
 import numpy as np
 import pytest
 
-from mcdm.models.decision_problem import DecisionProblem
-from mcdm.strategies.topsis import TopsisStrategy
-from mcdm.validation.validators import validate_decision_problem, ValidationError
+from models.decision_problem import DecisionProblem
+from strategies.topsis import TopsisStrategy
+from validation.validators import validate_decision_problem, ValidationError
 
 EXAMPLES_DIR = "data/examples"
 

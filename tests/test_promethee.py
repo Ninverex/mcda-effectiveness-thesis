@@ -17,8 +17,8 @@ wykrywa nieporownywalnosc w przypadku symetrycznym.
 import numpy as np
 import pytest
 
-from mcdm.models.decision_problem import DecisionProblem
-from mcdm.strategies.promethee import PrometheeStrategy
+from models.decision_problem import DecisionProblem
+from strategies.promethee import PrometheeStrategy
 
 EXAMPLES_DIR = "data/examples"
 

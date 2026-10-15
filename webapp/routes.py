@@ -26,17 +26,17 @@ from flask import (
     url_for,
 )
 
-from mcdm.controller import MCDMController
-from mcdm.evaluation.rank_correlation import compare_all_pairs
-from mcdm.evaluation.rank_reversal import simulate_rank_reversal
-from mcdm.evaluation.sensitivity import weight_sensitivity_analysis
-from mcdm.models.decision_problem import DecisionProblem
-from mcdm.strategies import AhpStrategy, ElectreIStrategy, PrometheeStrategy, TopsisStrategy
-from mcdm.validation.validators import ValidationError, validate_decision_problem
-from mcdm.visualization._utils import figure_to_base64
-from mcdm.visualization.diff_report import build_diff_html_table, plot_rank_reversal_diff
-from mcdm.visualization.gaia import plot_gaia_plane
-from mcdm.visualization.radar import plot_radar_chart
+from controller import MCDMController
+from evaluation.rank_correlation import compare_all_pairs
+from evaluation.rank_reversal import simulate_rank_reversal
+from evaluation.sensitivity import weight_sensitivity_analysis
+from models.decision_problem import DecisionProblem
+from strategies import AhpStrategy, ElectreIStrategy, PrometheeStrategy, TopsisStrategy
+from validation.validators import ValidationError, validate_decision_problem
+from visualization._utils import figure_to_base64
+from visualization.diff_report import build_diff_html_table, plot_rank_reversal_diff
+from visualization.gaia import plot_gaia_plane
+from visualization.radar import plot_radar_chart
 from webapp.reports import build_excel_report, build_pdf_report
 
 bp = Blueprint("main", __name__)

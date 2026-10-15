@@ -1,0 +1,16 @@
+# Normalizacja koncow linii -- zapobiega falszywym diffom CRLF/LF
+# przy pracy na roznych systemach (istotne przy oddawaniu pracy
+# promotorowi, ktory moze uzywac Windows).
+* text=auto eol=lf
+
+*.py text diff=python
+*.md  text
+*.json text
+*.css text
+*.html text
+
+# Pliki binarne -- bez prob na normalizacje/diff tekstowy
+*.png binary
+*.jpg binary
+*.pdf binary
+*.xlsx binary

@@ -15,8 +15,8 @@ from __future__ import annotations
 
 import numpy as np
 
-from mcdm.models.decision_problem import DecisionProblem
-from mcdm.visualization._utils import plt
+from models.decision_problem import DecisionProblem
+from visualization._utils import plt
 
 
 def normalized_profiles(problem: DecisionProblem) -> np.ndarray:

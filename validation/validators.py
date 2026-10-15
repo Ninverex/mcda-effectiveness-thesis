@@ -15,7 +15,7 @@ from __future__ import annotations
 
 import numpy as np
 
-from mcdm.models.decision_problem import DecisionProblem
+from models.decision_problem import DecisionProblem
 
 
 class ValidationError(Exception):

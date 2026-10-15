@@ -26,9 +26,9 @@ sciekow), co bylo jednym z zalozen metodyki badan pracy (rozdzial 2.2.1
 import numpy as np
 import pytest
 
-from mcdm.models.decision_problem import DecisionProblem
-from mcdm.strategies.topsis import TopsisStrategy
-from mcdm.validation.validators import validate_decision_problem
+from models.decision_problem import DecisionProblem
+from strategies.topsis import TopsisStrategy
+from validation.validators import validate_decision_problem
 
 EXAMPLE_PATH = "data/examples/wastewater_treatment_vientiane.json"
 

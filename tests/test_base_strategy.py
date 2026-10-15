@@ -7,7 +7,7 @@ Testy jednostkowe dla mcdm/strategies/base.py -- RankingResult
 import numpy as np
 import pytest
 
-from mcdm.strategies.base import ICalculationStrategy, RankingResult
+from strategies.base import ICalculationStrategy, RankingResult
 
 
 def make_result(**overrides):

@@ -16,8 +16,8 @@ brane wprost z problem.weights).
 import numpy as np
 import pytest
 
-from mcdm.models.decision_problem import DecisionProblem
-from mcdm.strategies.ahp import AhpStrategy, CR_THRESHOLD, ConsistencyWarning
+from models.decision_problem import DecisionProblem
+from strategies.ahp import AhpStrategy, CR_THRESHOLD, ConsistencyWarning
 
 EXAMPLES_DIR = "data/examples"
 

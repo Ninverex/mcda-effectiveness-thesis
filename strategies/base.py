@@ -15,7 +15,7 @@ from dataclasses import dataclass, field
 
 import numpy as np
 
-from mcdm.models.decision_problem import DecisionProblem
+from models.decision_problem import DecisionProblem
 
 
 @dataclass

@@ -6,12 +6,12 @@ dispatch po nazwie metody oraz integracje z warstwa walidacji (WN1).
 
 import pytest
 
-from mcdm.controller import MCDMController
-from mcdm.models.decision_problem import DecisionProblem
-from mcdm.strategies.base import RankingResult
-from mcdm.strategies.topsis import TopsisStrategy
-from mcdm.strategies.ahp import AhpStrategy
-from mcdm.validation.validators import ValidationError
+from controller import MCDMController
+from models.decision_problem import DecisionProblem
+from strategies.base import RankingResult
+from strategies.topsis import TopsisStrategy
+from strategies.ahp import AhpStrategy
+from validation.validators import ValidationError
 
 
 def make_problem(**overrides):

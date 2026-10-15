@@ -14,8 +14,8 @@ Udostepnia dwie formy tego samego raportu:
 
 from __future__ import annotations
 
-from mcdm.evaluation.rank_reversal import RankReversalReport
-from mcdm.visualization._utils import plt
+from evaluation.rank_reversal import RankReversalReport
+from visualization._utils import plt
 
 
 def build_diff_html_table(report: RankReversalReport) -> str:

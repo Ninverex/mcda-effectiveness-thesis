@@ -7,9 +7,9 @@ import io
 import openpyxl
 import pytest
 
-from mcdm.controller import MCDMController
-from mcdm.models.decision_problem import DecisionProblem
-from mcdm.strategies import AhpStrategy, ElectreIStrategy, PrometheeStrategy, TopsisStrategy
+from controller import MCDMController
+from models.decision_problem import DecisionProblem
+from strategies import AhpStrategy, ElectreIStrategy, PrometheeStrategy, TopsisStrategy
 from webapp.reports import build_excel_report, build_pdf_report
 
 EXAMPLES_DIR = "data/examples"

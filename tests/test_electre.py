@@ -17,8 +17,8 @@ wlasciwosc jadra relacji przewyzszania.
 
 import numpy as np
 
-from mcdm.models.decision_problem import DecisionProblem
-from mcdm.strategies.electre import ElectreIStrategy
+from models.decision_problem import DecisionProblem
+from strategies.electre import ElectreIStrategy
 
 EXAMPLES_DIR = "data/examples"
 

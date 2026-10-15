@@ -14,7 +14,7 @@ import matplotlib.pyplot as plt
 import pytest
 from PIL import Image
 
-from mcdm.visualization._utils import (
+from visualization._utils import (
     figure_to_base64,
     figure_to_png_bytes,
     save_figure,

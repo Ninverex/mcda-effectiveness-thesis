@@ -2,14 +2,14 @@
 Testy jednostkowe dla mcdm/visualization/diff_report.py.
 """
 
-from mcdm.models.decision_problem import DecisionProblem
-from mcdm.strategies.topsis import TopsisStrategy
-from mcdm.evaluation.rank_reversal import simulate_rank_reversal
-from mcdm.visualization.diff_report import (
+from models.decision_problem import DecisionProblem
+from strategies.topsis import TopsisStrategy
+from evaluation.rank_reversal import simulate_rank_reversal
+from visualization.diff_report import (
     build_diff_html_table,
     plot_rank_reversal_diff,
 )
-from mcdm.visualization._utils import figure_to_base64
+from visualization._utils import figure_to_base64
 
 EXAMPLES_DIR = "data/examples"
 

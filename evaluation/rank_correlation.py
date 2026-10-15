@@ -14,7 +14,7 @@ from itertools import combinations
 
 from scipy.stats import kendalltau, spearmanr
 
-from mcdm.strategies.base import RankingResult
+from strategies.base import RankingResult
 
 
 def compare_rankings(ranking_a: list[int], ranking_b: list[int]) -> dict:

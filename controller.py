@@ -9,9 +9,9 @@ nie znajac jej szczegolow implementacyjnych.
 
 from __future__ import annotations
 
-from mcdm.models.decision_problem import DecisionProblem
-from mcdm.strategies.base import ICalculationStrategy, RankingResult
-from mcdm.validation.validators import validate_decision_problem, ValidationError
+from models.decision_problem import DecisionProblem
+from strategies.base import ICalculationStrategy, RankingResult
+from validation.validators import validate_decision_problem, ValidationError
 
 
 class MCDMController:

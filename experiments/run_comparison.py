@@ -16,20 +16,20 @@ import sys
 # Umozliwia uruchomienie skryptu bezposrednio z katalogu experiments/
 sys.path.insert(0, str(Path(__file__).resolve().parent.parent))
 
-from mcdm.models.decision_problem import DecisionProblem
-from mcdm.controller import MCDMController
-from mcdm.strategies import (
+from models.decision_problem import DecisionProblem
+from controller import MCDMController
+from strategies import (
     TopsisStrategy,
     AhpStrategy,
     PrometheeStrategy,
     ElectreIStrategy,
 )
-from mcdm.evaluation.rank_correlation import compare_rankings
-from mcdm.evaluation.rank_reversal import simulate_rank_reversal
-from mcdm.visualization._utils import save_figure
-from mcdm.visualization.diff_report import plot_rank_reversal_diff
-from mcdm.visualization.gaia import plot_gaia_plane
-from mcdm.visualization.radar import plot_radar_chart
+from evaluation.rank_correlation import compare_rankings
+from evaluation.rank_reversal import simulate_rank_reversal
+from visualization._utils import save_figure
+from visualization.diff_report import plot_rank_reversal_diff
+from visualization.gaia import plot_gaia_plane
+from visualization.radar import plot_radar_chart
 
 OUTPUT_DIR = Path(__file__).resolve().parent / "output"
 
