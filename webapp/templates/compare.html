@@ -36,13 +36,31 @@
 
 {% if comparison %}
 <div class="compare-grid compare-results">
+  {# Kazdy "poziom" tresci (tytul, wykres, a potem naglowek i tabela
+     KAZDEJ metody z osobna) jest wlasnym wierszem siatki, zamiast
+     calego bloku strony plynacego jednym ciagiem. Dzieki temu wiersz
+     siatki zawsze ma wysokosc rowna wiekszej z dwoch kolumn -- gdy
+     zbior B ma wiecej alternatyw (dluzsza tabela TOPSIS), to tylko
+     wiersz TOPSIS rosnie; naglowek kolejnej metody (AHP) i tak
+     zaczyna sie w tym samym miejscu po obu stronach, bo jest juz
+     osobnym wierszem. Zaklada, ze obie strony licza te same metody
+     w tej samej kolejnosci (controller rejestruje je raz, zawsze w
+     tej samej kolejnosci -- patrz _build_controller w routes.py). #}
   {% for side in ["a", "b"] %}
-  <div>
-    <h2>{{ comparison[side].label }}</h2>
-    <img src="data:image/png;base64,{{ comparison[side].radar_b64 }}" alt="Wykres radarowy" class="chart-img">
+  <h2 class="compare-title">{{ comparison[side].label }}</h2>
+  {% endfor %}
 
-    {% for method_name, result in comparison[side].results.items() %}
-    <h3>{{ method_name }}</h3>
+  {% for side in ["a", "b"] %}
+  <img src="data:image/png;base64,{{ comparison[side].radar_b64 }}" alt="Wykres radarowy" class="chart-img">
+  {% endfor %}
+
+  {% for method_name in comparison["a"].results.keys() %}
+    {% for side in ["a", "b"] %}
+    <h3 class="compare-method-title">{{ method_name }}</h3>
+    {% endfor %}
+
+    {% for side in ["a", "b"] %}
+    {% set result = comparison[side].results[method_name] %}
     <table class="data-table">
       <thead><tr><th>Poz.</th><th>Alternatywa</th><th>Wynik</th></tr></thead>
       <tbody>
@@ -56,7 +74,6 @@
       </tbody>
     </table>
     {% endfor %}
-  </div>
   {% endfor %}
 </div>
 {% endif %}
