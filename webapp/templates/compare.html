@@ -1,51 +1,50 @@
 {% extends "base.html" %}
-{% block title %}Porownanie dwoch zbiorow danych{% endblock %}
+{% block title %}Porównanie dwóch zbiorów danych{% endblock %}
 {% block content %}
-<h1>Porownanie dwoch zbiorow danych</h1>
-<p class="muted">Wybierz dwa (niekoniecznie takie same) problemy decyzyjne i zobacz wyniki wszystkich metod obok siebie -- nie wplywa to na problem wczytany w pozostalych widokach.</p>
+<h1>Porównanie dwóch zbiorów danych</h1>
+<p class="muted">Wybierz dwa (niekoniecznie takie same) problemy decyzyjne i zobacz wyniki wszystkich metod obok siebie — nie wpływa to na problem wczytany w pozostałych widokach.</p>
 
 <form method="post" enctype="multipart/form-data">
   <div class="compare-grid">
     <div class="card">
-      <h3>Zbior A</h3>
-      <label>Przyklad wbudowany:
+      <h3>Zbiór A</h3>
+      <label>Przykład wbudowany:
         <select name="example_a">
           {% for key, label in examples.items() %}<option value="{{ key }}">{{ label }}</option>{% endfor %}
         </select>
       </label>
-      <label>...lub wlasny plik JSON:
+      <label>...lub własny plik JSON:
         <input type="file" name="file_a" accept="application/json">
       </label>
     </div>
     <div class="card">
-      <h3>Zbior B</h3>
-      <label>Przyklad wbudowany:
+      <h3>Zbiór B</h3>
+      <label>Przykład wbudowany:
         <select name="example_b">
           {% for key, label in examples.items() %}
           <option value="{{ key }}" {% if key == "wastewater_treatment_vientiane" %}selected{% endif %}>{{ label }}</option>
           {% endfor %}
         </select>
       </label>
-      <label>...lub wlasny plik JSON:
+      <label>...lub własny plik JSON:
         <input type="file" name="file_b" accept="application/json">
       </label>
     </div>
   </div>
-  <button type="submit" class="btn btn-primary">Porownaj</button>
+  <button type="submit" class="btn btn-primary">Porównaj</button>
 </form>
 
 {% if comparison %}
 <div class="compare-grid compare-results">
-  {# Kazdy "poziom" tresci (tytul, wykres, a potem naglowek i tabela
-     KAZDEJ metody z osobna) jest wlasnym wierszem siatki, zamiast
-     calego bloku strony plynacego jednym ciagiem. Dzieki temu wiersz
-     siatki zawsze ma wysokosc rowna wiekszej z dwoch kolumn -- gdy
-     zbior B ma wiecej alternatyw (dluzsza tabela TOPSIS), to tylko
-     wiersz TOPSIS rosnie; naglowek kolejnej metody (AHP) i tak
-     zaczyna sie w tym samym miejscu po obu stronach, bo jest juz
-     osobnym wierszem. Zaklada, ze obie strony licza te same metody
-     w tej samej kolejnosci (controller rejestruje je raz, zawsze w
-     tej samej kolejnosci -- patrz _build_controller w routes.py). #}
+  {# Każdy "poziom" treści (tytuł, wykres, a potem nagłówek i tabela
+     KAŻDEJ metody z osobna) jest własnym wierszem siatki, zamiast
+     całego bloku strony płynącego jednym ciągiem. Dzięki temu wiersz
+     siatki zawsze ma wysokość równą większej z dwóch kolumn — gdy
+     zbiór B ma więcej alternatyw (dłuższa tabela TOPSIS), to tylko
+     wiersz TOPSIS rośnie; nagłówek kolejnej metody (AHP) i tak
+     zaczyna się w tym samym miejscu po obu stronach, bo jest już
+     osobnym wierszem. Zakłada, że obie strony liczą te same metody
+     w tej samej kolejności — patrz _build_controller w routes.py). #}
   {% for side in ["a", "b"] %}
   <h2 class="compare-title">{{ comparison[side].label }}</h2>
   {% endfor %}
