@@ -2,7 +2,7 @@
 {% block title %}Wyniki{% endblock %}
 {% block content %}
 <h1>Rankingi wszystkich metod</h1>
-<p class="muted">Ten sam problem decyzyjny, cztery rozne algorytmy MCDM.</p>
+<p class="muted">Ten sam problem decyzyjny, cztery różne algorytmy MCDM.</p>
 
 <div class="actions">
   <a class="btn btn-secondary" href="{{ url_for('main.export_results_pdf') }}">Pobierz raport PDF</a>
@@ -11,13 +11,13 @@
 
 <div class="chart-grid">
   <div class="card">
-    <h2>Profile wydajnosci alternatyw</h2>
+    <h2>Profile wydajności alternatyw</h2>
     <img src="data:image/png;base64,{{ radar_chart_b64 }}" alt="Wykres radarowy profili alternatyw" class="chart-img">
   </div>
   {% if gaia_plane_b64 %}
   <div class="card">
-    <h2>Plaszczyzna GAIA</h2>
-    <img src="data:image/png;base64,{{ gaia_plane_b64 }}" alt="Plaszczyzna GAIA -- geometryczna interpretacja PROMETHEE" class="chart-img">
+    <h2>Płaszczyzna GAIA</h2>
+    <img src="data:image/png;base64,{{ gaia_plane_b64 }}" alt="Płaszczyzna GAIA — geometryczna interpretacja PROMETHEE" class="chart-img">
   </div>
   {% endif %}
 </div>
@@ -38,8 +38,8 @@
 </table>
 {% endfor %}
 
-<h2>Zgodnosc rankingow (Kendall &tau; / Spearman &rho;)</h2>
-<p class="muted">Wartosci blisko 1.0 oznacza duza zgodnosc metod, blisko 0 lub ujemne -- istotne rozbieznosci.</p>
+<h2>Zgodność rankingów (Kendall &tau; / Spearman &rho;)</h2>
+<p class="muted">Wartości blisko 1.0 oznaczają dużą zgodność metod, blisko 0 lub ujemne — istotne rozbieżności.</p>
 <table class="data-table">
   <thead><tr><th>Metoda A</th><th>Metoda B</th><th>Kendall &tau;</th><th>Spearman &rho;</th></tr></thead>
   <tbody>
