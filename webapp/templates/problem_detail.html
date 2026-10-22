@@ -1,10 +1,10 @@
 {% extends "base.html" %}
-{% block title %}Podglad problemu{% endblock %}
+{% block title %}Podgląd problemu{% endblock %}
 {% block content %}
-<h1>Podglad problemu decyzyjnego</h1>
-<p class="muted">Zrodlo: {{ source }}</p>
+<h1>Podgląd problemu decyzyjnego</h1>
+<p class="muted">Źródło: {{ source }}</p>
 
-<div class="badge badge-success">Dane zwalidowane poprawnie (WN1: brak brakow, suma wag = 1.0)</div>
+<div class="badge badge-success">Dane zwalidowane poprawnie (WN1: brak braków, suma wag = 1.0)</div>
 
 <h2>Macierz decyzyjna</h2>
 <table class="data-table">
@@ -42,6 +42,6 @@
 
 <div class="actions">
   <a class="btn btn-primary" href="{{ url_for('main.results') }}">Uruchom wszystkie metody</a>
-  <a class="btn btn-secondary" href="{{ url_for('main.ahp_pairwise') }}">Zdefiniuj wagi AHP (porownania parami)</a>
+  <a class="btn btn-secondary" href="{{ url_for('main.ahp_pairwise') }}">Zdefiniuj wagi AHP (porównania parami)</a>
 </div>
 {% endblock %}
