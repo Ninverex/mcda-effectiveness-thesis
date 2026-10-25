@@ -44,9 +44,9 @@ bp = Blueprint("main", __name__)
 EXAMPLES_DIR = Path(__file__).resolve().parent.parent / "data" / "examples"
 
 EXAMPLE_LABELS = {
-    "laptop_selection": "Wybor laptopa (przyklad dydaktyczny)",
-    "sewage_network_variants": "Warianty sieci kanalizacyjnej (przyklad domenowy)",
-    "wastewater_treatment_vientiane": "Oczyszczanie sciekow, Vientiane (dane rzeczywiste z literatury)",
+    "laptop_selection": "Wybór laptopa (przykład dydaktyczny)",
+    "sewage_network_variants": "Warianty sieci kanalizacyjnej (przykład domenowy)",
+    "wastewater_treatment_vientiane": "Oczyszczanie ścieków, Vientiane (dane rzeczywiste z literatury)",
 }
 
 
@@ -99,7 +99,7 @@ def index():
 @bp.route("/load-example/<name>", methods=["POST"])
 def load_example(name):
     if name not in EXAMPLE_LABELS:
-        flash(f"Nieznany przyklad: {name}", "error")
+        flash(f"Nieznany przykład: {name}", "error")
         return redirect(url_for("main.index"))
 
     path = EXAMPLES_DIR / f"{name}.json"
@@ -107,7 +107,7 @@ def load_example(name):
         problem = DecisionProblem.from_json(path)
         validate_decision_problem(problem)
     except (ValidationError, FileNotFoundError, json.JSONDecodeError) as exc:
-        flash(f"Blad wczytywania przykladu: {exc}", "error")
+        flash(f"Błąd wczytywania przykładu: {exc}", "error")
         return redirect(url_for("main.index"))
 
     _store_problem(problem, EXAMPLE_LABELS[name])
@@ -129,7 +129,7 @@ def upload():
         # ze wskazaniem konkretnej komorki macierzy (patrz validators.py).
         validate_decision_problem(problem)
     except (ValidationError, json.JSONDecodeError, KeyError, ValueError) as exc:
-        flash(f"Blad walidacji pliku '{file.filename}': {exc}", "error")
+        flash(f"Błąd walidacji pliku '{file.filename}': {exc}", "error")
         return redirect(url_for("main.index"))
 
     _store_problem(problem, file.filename)
@@ -163,7 +163,7 @@ def problem_detail():
 def reset():
     session.pop("problem", None)
     session.pop("problem_source", None)
-    flash("Wyczyszczono biezacy problem decyzyjny.", "success")
+    flash("Wyczyszczono bieżący problem decyzyjny.", "success")
     return redirect(url_for("main.index"))
 
 
@@ -197,7 +197,7 @@ def ahp_pairwise():
                 matrix[i, j] = value
                 matrix[j, i] = 1.0 / value
         except (ValueError, ZeroDivisionError) as exc:
-            flash(f"Nieprawidlowa wartosc porownania: {exc}", "error")
+            flash(f"Nieprawidłowa wartość porównania: {exc}", "error")
             return render_template(
                 "ahp_pairwise.html",
                 problem=problem,
@@ -214,15 +214,15 @@ def ahp_pairwise():
                 # obliczen koncowych, dopoki uzytkownik nie zrewiduje
                 # najbardziej niespojnych porownan.
                 flash(
-                    f"CR = {result['CR']:.3f} przekracza prog 0.10 -- "
-                    "zrewiduj porownania przed uzyciem tych wag.",
+                    f"CR = {result['CR']:.3f} przekracza próg 0.10 — "
+                    "zrewiduj porównania przed użyciem tych wag.",
                     "error",
                 )
             else:
                 data = problem.to_dict()
                 data["weights"] = result["weights"].tolist()
                 session["problem"] = data
-                flash("Zastosowano wagi wyliczone z macierzy porownan AHP.", "success")
+                flash("Zastosowano wagi wyliczone z macierzy porównań AHP.", "success")
                 return redirect(url_for("main.problem_detail"))
 
     return render_template(
@@ -258,7 +258,7 @@ def results():
     try:
         all_results = controller.run_all(problem)
     except ValidationError as exc:
-        flash(f"Blad walidacji: {exc}", "error")
+        flash(f"Błąd walidacji: {exc}", "error")
         return redirect(url_for("main.problem_detail"))
 
     correlations = compare_all_pairs(all_results)
@@ -293,7 +293,7 @@ def export_results_pdf():
     try:
         all_results = controller.run_all(problem)
     except ValidationError as exc:
-        flash(f"Blad walidacji: {exc}", "error")
+        flash(f"Błąd walidacji: {exc}", "error")
         return redirect(url_for("main.problem_detail"))
 
     pdf_bytes = build_pdf_report(
@@ -317,7 +317,7 @@ def export_results_excel():
     try:
         all_results = controller.run_all(problem)
     except ValidationError as exc:
-        flash(f"Blad walidacji: {exc}", "error")
+        flash(f"Błąd walidacji: {exc}", "error")
         return redirect(url_for("main.problem_detail"))
 
     excel_bytes = build_excel_report(
@@ -416,7 +416,7 @@ def compare():
             problem_a, label_a = _load_compare_side(request, side="a")
             problem_b, label_b = _load_compare_side(request, side="b")
         except (ValidationError, ValueError, json.JSONDecodeError, KeyError) as exc:
-            flash(f"Blad wczytywania danych do porownania: {exc}", "error")
+            flash(f"Błąd wczytywania danych do porównania: {exc}", "error")
             return render_template("compare.html", examples=EXAMPLE_LABELS, comparison=None)
 
         comparison = {

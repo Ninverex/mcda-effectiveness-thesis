@@ -62,7 +62,7 @@ def plot_gaia_plane(
     """
     if problem.n_criteria < 3:
         raise ValueError(
-            "Plaszczyzna GAIA wymaga co najmniej 3 kryteriow "
+            "Płaszczyzna GAIA wymaga co najmniej 3 kryteriów "
             f"(otrzymano {problem.n_criteria}) -- przy 2 kryteriach "
             "rzutowanie PCA nie wnosi nic ponad oryginalny wykres."
         )
@@ -144,11 +144,11 @@ def plot_gaia_plane(
 
     explained = pca.explained_variance_ratio_.sum() * 100
     ax.set_title(
-        f"Plaszczyzna GAIA (wyjasniona wariancja: {explained:.0f}%)",
+        f"Płaszczyzna GAIA (wyjaśniona wariancja: {explained:.0f}%)",
         fontsize=10,
     )
-    ax.set_xlabel("Skladowa glowna 1")
-    ax.set_ylabel("Skladowa glowna 2")
+    ax.set_xlabel("Składowa główna 1")
+    ax.set_ylabel("Składowa główna 2")
 
     # Granice osi z niezaleznym marginesem dla X i Y (nie wymuszamy
     # scisle rownych proporcji 1:1). W klasycznym ujeciu GAIA rowne

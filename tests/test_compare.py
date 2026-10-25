@@ -22,8 +22,8 @@ def client():
 def test_compare_page_loads(client):
     response = client.get("/compare")
     assert response.status_code == 200
-    assert "Zbior A".encode("utf-8") in response.data
-    assert "Zbior B".encode("utf-8") in response.data
+    assert "Zbiór A".encode("utf-8") in response.data
+    assert "Zbiór B".encode("utf-8") in response.data
 
 
 def test_compare_two_builtin_examples(client):
@@ -87,7 +87,7 @@ def test_compare_missing_selection_shows_error(client):
         follow_redirects=True,
     )
     assert response.status_code == 200
-    assert "Blad wczytywania danych".encode("utf-8") in response.data
+    assert "Błąd wczytywania danych".encode("utf-8") in response.data
 
 
 def test_compare_invalid_uploaded_json_shows_error(client):
@@ -110,4 +110,4 @@ def test_compare_invalid_uploaded_json_shows_error(client):
         follow_redirects=True,
     )
     assert response.status_code == 200
-    assert "Blad wczytywania danych".encode("utf-8") in response.data
+    assert "Błąd wczytywania danych".encode("utf-8") in response.data

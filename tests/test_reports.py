@@ -63,7 +63,7 @@ def test_build_excel_report_returns_valid_workbook():
 
     workbook = openpyxl.load_workbook(io.BytesIO(excel_bytes))
     expected_sheets = {"Macierz decyzyjna", "TOPSIS", "AHP", "PROMETHEE",
-                        "ELECTRE I", "Zgodnosc rankingow"}
+                        "ELECTRE I", "Zgodność rankingów"}
     assert expected_sheets.issubset(set(workbook.sheetnames))
 
 

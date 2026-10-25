@@ -65,7 +65,7 @@ def test_problem_page_redirects_without_loaded_problem(client):
     response = client.get("/problem", follow_redirects=True)
     assert response.status_code == 200
     # Powinno przekierowac na strone glowna (brak problemu w sesji)
-    assert "Wybierz przykladowy problem".encode("utf-8") in response.data
+    assert "Wybierz przykładowy problem".encode("utf-8") in response.data
 
 
 def test_upload_invalid_json_shows_validation_error(client):
@@ -87,7 +87,7 @@ def test_upload_invalid_json_shows_validation_error(client):
         follow_redirects=True,
     )
     assert response.status_code == 200
-    assert "Blad walidacji".encode("utf-8") in response.data
+    assert "Błąd walidacji".encode("utf-8") in response.data
 
 
 def test_upload_valid_json_succeeds(client):
@@ -128,7 +128,7 @@ def test_ahp_pairwise_page_loads(client):
     _load_example(client)
     response = client.get("/problem/ahp-pairwise")
     assert response.status_code == 200
-    assert "porownan parami".encode("utf-8") in response.data
+    assert "porównań parami".encode("utf-8") in response.data
 
 
 def test_ahp_pairwise_consistent_allows_using_weights(client):
@@ -163,7 +163,7 @@ def test_ahp_pairwise_inconsistent_blocks_weight_usage(client):
         "/problem/ahp-pairwise", data=form_data, follow_redirects=True
     )
     assert response.status_code == 200
-    assert "przekracza prog 0.10".encode("utf-8") in response.data
+    assert "przekracza próg 0.10".encode("utf-8") in response.data
 
 
 # ----------------------------------------------------------------------
@@ -199,7 +199,7 @@ def test_export_excel_returns_valid_workbook(client):
 def test_export_pdf_redirects_without_loaded_problem(client):
     response = client.get("/problem/results/export/pdf", follow_redirects=True)
     assert response.status_code == 200
-    assert "Wybierz przykladowy problem".encode("utf-8") in response.data
+    assert "Wybierz przykładowy problem".encode("utf-8") in response.data
 
 
 def test_rank_reversal_simulation(client):
@@ -238,7 +238,7 @@ def test_results_page_embeds_gaia_plane_for_problem_with_3plus_criteria(client):
     _load_example(client)
     response = client.get("/problem/results")
     assert response.status_code == 200
-    assert "Plaszczyzna GAIA".encode("utf-8") in response.data
+    assert "Płaszczyzna GAIA".encode("utf-8") in response.data
 
 
 def test_rank_reversal_page_embeds_diff_chart_and_table(client):

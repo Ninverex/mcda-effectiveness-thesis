@@ -37,7 +37,7 @@ def test_build_diff_html_table_marks_removed_alternative():
     html = build_diff_html_table(report)
 
     assert "diff-row-removed" in html
-    assert "usunieta" in html
+    assert "usunięta" in html
 
 
 def test_build_diff_html_table_marks_unchanged_and_changed_rows():

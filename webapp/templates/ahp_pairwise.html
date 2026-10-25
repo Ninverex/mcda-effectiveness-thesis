@@ -1,16 +1,16 @@
 {% extends "base.html" %}
-{% block title %}AHP - porownania parami{% endblock %}
+{% block title %}AHP - porównania parami{% endblock %}
 {% block content %}
-<h1>AHP: macierz porownan parami kryteriow</h1>
+<h1>AHP: macierz porównań parami kryteriów</h1>
 <p class="muted">
-  Skala Saaty'ego 1-9: wpisz wartosc "5" jesli kryterium wierszowe jest wazniejsze,
-  lub "1/5" jesli kolumnowe jest wazniejsze. Wartosc "1" oznacza rownowazne kryteria.
+  Skala Saaty'ego 1-9: wpisz wartość "5", jeśli kryterium wierszowe jest ważniejsze,
+  lub "1/5", jeśli kolumnowe jest ważniejsze. Wartość "1" oznacza równoważne kryteria.
 </p>
 
 <form method="post">
   <table class="data-table">
     <thead>
-      <tr><th>Para kryteriow</th><th>Waznosc (np. 3, 1/3, 1)</th></tr>
+      <tr><th>Para kryteriów</th><th>Ważność (np. 3, 1/3, 1)</th></tr>
     </thead>
     <tbody>
       {% for i, j in pairs %}
@@ -24,11 +24,11 @@
       {% endfor %}
     </tbody>
   </table>
-  <button type="submit" class="btn btn-primary">Oblicz wagi i wspolczynnik spojnosci</button>
+  <button type="submit" class="btn btn-primary">Oblicz wagi i współczynnik spójności</button>
 </form>
 
 {% if result %}
-<h2>Wyliczone wagi kryteriow</h2>
+<h2>Wyliczone wagi kryteriów</h2>
 <table class="data-table">
   <thead><tr><th>Kryterium</th><th>Waga</th></tr></thead>
   <tbody>
@@ -38,20 +38,20 @@
   </tbody>
 </table>
 
-<p>CI (wskaznik spojnosci) = <span class="num">{{ "%.4f"|format(result.CI) }}</span>, CR (wspolczynnik spojnosci) = <span class="num">{{ "%.4f"|format(result.CR) }}</span></p>
+<p>CI (wskaźnik spójności) = <span class="num">{{ "%.4f"|format(result.CI) }}</span>, CR (współczynnik spójności) = <span class="num">{{ "%.4f"|format(result.CR) }}</span></p>
 
 {% if result.consistent %}
-<div class="badge badge-success">Osady sa spojne (CR &le; 0.10) -- mozna uzyc tych wag</div>
+<div class="badge badge-success">Osądy są spójne (CR &le; 0.10) — można użyć tych wag</div>
 <form method="post">
   {% for i, j in pairs %}
   <input type="hidden" name="pair_{{ i }}_{{ j }}" value="{{ values.get('pair_' ~ i ~ '_' ~ j, '1') }}">
   {% endfor %}
-  <button type="submit" name="use_weights" value="1" class="btn btn-primary">Uzyj tych wag w problemie</button>
+  <button type="submit" name="use_weights" value="1" class="btn btn-primary">Użyj tych wag w problemie</button>
 </form>
 {% else %}
 <div class="badge badge-error">
-  CR &gt; 0.10 -- osady eksperckie sa niespojne. Zrewiduj najbardziej skrajne porownania
-  przed uzyciem tych wag (zgodnie z PU2: blokada przejscia do obliczen koncowych).
+  CR &gt; 0.10 — osądy eksperckie są niespójne. Zrewiduj najbardziej skrajne porównania
+  przed użyciem tych wag (zgodnie z PU2: blokada przejścia do obliczeń końcowych).
 </div>
 {% endif %}
 {% endif %}

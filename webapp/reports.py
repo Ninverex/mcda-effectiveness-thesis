@@ -24,6 +24,8 @@ from reportlab.lib import colors
 from reportlab.lib.pagesizes import A4
 from reportlab.lib.styles import ParagraphStyle, getSampleStyleSheet
 from reportlab.lib.units import cm
+from reportlab.pdfbase import pdfmetrics
+from reportlab.pdfbase.ttfonts import TTFont
 from reportlab.platypus import (
     Image,
     KeepTogether,
@@ -45,6 +47,24 @@ from visualization.radar import plot_radar_chart
 BRAND_COLOR = colors.HexColor("#4c5fe0")
 ROW_ALT_COLOR = colors.HexColor("#f5f6fb")
 GRID_COLOR = colors.HexColor("#e2e5f1")
+
+# Standardowe czcionki PDF (Helvetica) nie zawierają polskich znaków
+# diakrytycznych (ą, ę, ł...), dlatego rejestrujemy DejaVu Sans, który
+# jest dołączony do matplotlib (już wymaganego przez projekt).
+FONT_REGULAR = "DejaVuSans"
+FONT_BOLD = "DejaVuSans-Bold"
+
+
+def _register_fonts() -> None:
+    if FONT_REGULAR in pdfmetrics.getRegisteredFontNames():
+        return
+    import os
+
+    import matplotlib
+
+    font_dir = os.path.join(os.path.dirname(matplotlib.__file__), "mpl-data", "fonts", "ttf")
+    pdfmetrics.registerFont(TTFont(FONT_REGULAR, os.path.join(font_dir, "DejaVuSans.ttf")))
+    pdfmetrics.registerFont(TTFont(FONT_BOLD, os.path.join(font_dir, "DejaVuSans-Bold.ttf")))
 
 
 def build_pdf_report(
@@ -70,7 +90,10 @@ def build_pdf_report(
         topMargin=2 * cm,
         bottomMargin=2 * cm,
     )
+    _register_fonts()
     styles = getSampleStyleSheet()
+    for style_name, font in (("Normal", FONT_REGULAR), ("Title", FONT_BOLD), ("Heading2", FONT_BOLD)):
+        styles[style_name].fontName = font
     muted_style = ParagraphStyle(
         "muted", parent=styles["Normal"], textColor=colors.grey, fontSize=9
     )
@@ -78,7 +101,7 @@ def build_pdf_report(
     story = []
 
     story.append(Paragraph("Raport MCDM Toolkit", styles["Title"]))
-    story.append(Paragraph(f"Zrodlo problemu decyzyjnego: {source_label}", styles["Normal"]))
+    story.append(Paragraph(f"Źródło problemu decyzyjnego: {source_label}", styles["Normal"]))
     story.append(
         Paragraph(
             f"Wygenerowano: {datetime.now().strftime('%Y-%m-%d %H:%M')}", muted_style
@@ -93,7 +116,7 @@ def build_pdf_report(
     story.append(Table(matrix_rows, hAlign="LEFT", style=_table_style(), repeatRows=1))
     story.append(Spacer(1, 0.5 * cm))
 
-    story.append(Paragraph("Profile wydajnosci alternatyw", styles["Heading2"]))
+    story.append(Paragraph("Profile wydajności alternatyw", styles["Heading2"]))
     radar_bytes = figure_to_png_bytes(plot_radar_chart(problem))
     story.append(
         Image(io.BytesIO(radar_bytes), width=14 * cm, height=14 * cm, kind="proportional")
@@ -101,7 +124,7 @@ def build_pdf_report(
 
     if problem.n_criteria >= 3:
         story.append(Spacer(1, 0.5 * cm))
-        story.append(Paragraph("Plaszczyzna GAIA", styles["Heading2"]))
+        story.append(Paragraph("Płaszczyzna GAIA", styles["Heading2"]))
         gaia_bytes = figure_to_png_bytes(plot_gaia_plane(problem))
         story.append(
             Image(io.BytesIO(gaia_bytes), width=15 * cm, height=11 * cm, kind="proportional")
@@ -126,7 +149,7 @@ def build_pdf_report(
         story.append(Spacer(1, 0.4 * cm))
 
     correlations = compare_all_pairs(results)
-    corr_rows = [["Metoda A", "Metoda B", "Kendall tau", "Spearman rho"]]
+    corr_rows = [["Metoda A", "Metoda B", "Kendall τ", "Spearman ρ"]]
     for (a, b), corr in correlations.items():
         corr_rows.append(
             [a, b, f"{corr['kendall_tau']:.3f}", f"{corr['spearman_rho']:.3f}"]
@@ -134,7 +157,7 @@ def build_pdf_report(
     story.append(
         KeepTogether(
             [
-                Paragraph("Zgodnosc rankingow (Kendall tau / Spearman rho)", styles["Heading2"]),
+                Paragraph("Zgodność rankingów (Kendall τ / Spearman ρ)", styles["Heading2"]),
                 Table(corr_rows, hAlign="LEFT", style=_table_style(), repeatRows=1),
             ]
         )
@@ -150,7 +173,8 @@ def _table_style() -> TableStyle:
         [
             ("BACKGROUND", (0, 0), (-1, 0), BRAND_COLOR),
             ("TEXTCOLOR", (0, 0), (-1, 0), colors.white),
-            ("FONTNAME", (0, 0), (-1, 0), "Helvetica-Bold"),
+            ("FONTNAME", (0, 0), (-1, 0), FONT_BOLD),
+            ("FONTNAME", (0, 1), (-1, -1), FONT_REGULAR),
             ("FONTSIZE", (0, 0), (-1, -1), 8),
             ("GRID", (0, 0), (-1, -1), 0.5, GRID_COLOR),
             ("ROWBACKGROUNDS", (0, 1), (-1, -1), [colors.white, ROW_ALT_COLOR]),
@@ -180,7 +204,7 @@ def build_excel_report(
 
     sheet = workbook.active
     sheet.title = "Macierz decyzyjna"
-    sheet.append(["Zrodlo:", source_label])
+    sheet.append(["Źródło:", source_label])
     sheet.append([])
     sheet.append(["Alternatywa"] + problem.criterion_names)
     for name, row in zip(problem.active_names, problem.active_matrix.tolist()):
@@ -196,8 +220,8 @@ def build_excel_report(
         _style_header_row(sheet, header_fill, header_font, header_row=1)
         _autofit_columns(sheet)
 
-    sheet = workbook.create_sheet(title="Zgodnosc rankingow")
-    sheet.append(["Metoda A", "Metoda B", "Kendall tau", "Spearman rho"])
+    sheet = workbook.create_sheet(title="Zgodność rankingów")
+    sheet.append(["Metoda A", "Metoda B", "Kendall τ", "Spearman ρ"])
     correlations = compare_all_pairs(results)
     for (a, b), corr in correlations.items():
         sheet.append([a, b, round(float(corr["kendall_tau"]), 3), round(float(corr["spearman_rho"]), 3)])

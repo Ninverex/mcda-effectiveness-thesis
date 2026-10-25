@@ -15,13 +15,13 @@
       <a class="brand" href="{{ url_for('main.index') }}">MCDM Toolkit</a>
       <nav>
         <a href="{{ url_for('main.index') }}">Start</a>
-        <a href="{{ url_for('main.compare') }}">Porownaj</a>
+        <a href="{{ url_for('main.compare') }}">Porównaj</a>
         {% if session.get('problem') %}
         <a href="{{ url_for('main.problem_detail') }}">Problem</a>
         <a href="{{ url_for('main.ahp_pairwise') }}">AHP (parami)</a>
         <a href="{{ url_for('main.results') }}">Wyniki</a>
         <a href="{{ url_for('main.rank_reversal') }}">Rank reversal</a>
-        <a href="{{ url_for('main.sensitivity') }}">Wrazliwosc wag</a>
+        <a href="{{ url_for('main.sensitivity') }}">Wrażliwość wag</a>
         {% endif %}
       </nav>
     </div>
@@ -43,7 +43,7 @@
 
   <footer class="footer">
     <div class="container">
-      MCDM Toolkit. Praca inzynierska: Maciej Pintal, 131491.
+      MCDM Toolkit. Praca inżynierska: Maciej Pintal, 131491.
     </div>
   </footer>
 </body>

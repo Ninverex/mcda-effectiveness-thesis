@@ -98,7 +98,7 @@ def plot_radar_chart(
     ax.set_yticks([0.25, 0.5, 0.75, 1.0])
     ax.set_yticklabels(["0.25", "0.5", "0.75", "1.0"], fontsize=7, color="gray")
     ax.set_title(
-        "Profile wydajnosci alternatyw\n(1.0 = najlepsza wartosc danego kryterium)",
+        "Profile wydajności alternatyw\n(1.0 = najlepsza wartość danego kryterium)",
         fontsize=10,
         pad=20,
     )

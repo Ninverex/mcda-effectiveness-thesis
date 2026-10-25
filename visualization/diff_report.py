@@ -34,7 +34,7 @@ def build_diff_html_table(report: RankReversalReport) -> str:
     for name, (before, after) in report.position_changes.items():
         if after is None:
             row_class = "diff-row-removed"
-            after_display = "usunieta"
+            after_display = "usunięta"
             change_display = "&mdash;"
         elif after == before:
             row_class = "diff-row-unchanged"
@@ -126,11 +126,11 @@ def plot_rank_reversal_diff(
     ax.set_xlim(-0.9, 1.6)
     ax.set_ylim(max_pos + 0.7, 0.3)  # odwrocona os Y: pozycja 1 na gorze
     ax.set_xticks([0, 1])
-    ax.set_xticklabels(["Przed", f"Po usunieciu\n'{report.removed_alternative}'"])
+    ax.set_xticklabels(["Przed", f"Po usunięciu\n'{report.removed_alternative}'"])
     ax.set_ylabel("Pozycja w rankingu")
     ax.set_yticks(range(1, max_pos + 1))
     ax.tick_params(axis="y", pad=10)
-    title_suffix = " -- WYKRYTO odwrocenie" if report.reversal_detected else ""
+    title_suffix = " — WYKRYTO odwrócenie" if report.reversal_detected else ""
     ax.set_title(f"{report.method_name}: zmiana pozycji{title_suffix}", fontsize=10)
     ax.spines[["top", "right"]].set_visible(False)
 
