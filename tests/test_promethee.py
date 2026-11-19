@@ -165,3 +165,17 @@ def test_unicriterion_net_flows_weighted_sum_matches_phi_net():
     flows = strategy.unicriterion_net_flows(problem)
     reconstructed_phi_net = flows @ problem.weights
     np.testing.assert_allclose(reconstructed_phi_net, result.scores, atol=1e-9)
+
+
+def test_promethee_more_criteria_than_alternatives_without_thresholds():
+    """Regresja: domyslne progi mialy dlugosc liczby alternatyw, nie kryteriow,
+    wiec przy m < n (np. 6 alternatyw x 12 kryteriow) wystepowal IndexError."""
+    problem = DecisionProblem(
+        matrix=[[1, 2, 3, 4, 5], [5, 4, 3, 2, 1], [3, 3, 3, 3, 3]],
+        weights=[0.2] * 5,
+        directions=["max"] * 5,
+        alternative_names=["A", "B", "C"],
+        criterion_names=[f"K{i}" for i in range(5)],
+    )
+    result = PrometheeStrategy().calculate_ranking(problem)
+    assert len(result.ranking) == 3

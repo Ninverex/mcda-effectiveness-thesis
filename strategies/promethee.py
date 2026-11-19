@@ -157,11 +157,11 @@ class PrometheeStrategy(ICalculationStrategy):
     ) -> tuple[float, float]:
         """Zwraca (q, p) dla kryterium j: z problem.thresholds jesli podane,
         w przeciwnym razie q=0 i p szacowane jako ulamek rozstepu wartosci."""
-        q_list = thresholds.get("q") or [0.0] * len(values)
-        p_list = thresholds.get("p") or [None] * len(values)
+        q_list = thresholds.get("q")
+        p_list = thresholds.get("p")
 
-        q = q_list[j] if q_list[j] is not None else 0.0
-        p = p_list[j]
+        q = q_list[j] if q_list and q_list[j] is not None else 0.0
+        p = p_list[j] if p_list else None
         if p is None:
             span = values.max() - values.min()
             p = max(span * self.default_preference_fraction, q + 1e-9)
