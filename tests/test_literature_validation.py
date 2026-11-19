@@ -162,3 +162,45 @@ def test_example_json_file_matches_experiment_1():
 
     for name, expected_score in expected.items():
         assert computed[name] == pytest.approx(expected_score, abs=5e-3)
+
+
+# ----------------------------------------------------------------------
+# Drugi zbior rzeczywisty: Sahin (2021), Int. J. Environ. Sci. Technol.
+# 18(6), 1591-1616, https://doi.org/10.1007/s13762-020-02922-7
+# 6 opcji wytwarzania energii w Turcji x 12 kryteriow (Tabela 9), rowne
+# wagi (MW). Pozycje referencyjne pochodza z tabel rankingowych artykulu.
+# ----------------------------------------------------------------------
+
+from pathlib import Path as _Path
+
+from strategies.promethee import PrometheeStrategy
+
+SAHIN_PATH = _Path(__file__).resolve().parent.parent / "data" / "examples" / "energy_turkey_sahin.json"
+
+SAHIN_TOPSIS_MW = {
+    "Hydro": 1, "Solar_PV": 2, "Wind_onshore": 3,
+    "Natural_gas": 4, "Coal": 5, "Geothermal": 6,
+}
+
+
+def test_sahin_file_loads_and_validates():
+    problem = DecisionProblem.from_json(SAHIN_PATH)
+    validate_decision_problem(problem)
+    assert problem.n_alternatives == 6
+    assert problem.n_criteria == 12
+
+
+def test_sahin_topsis_reproduces_published_ranking():
+    problem = DecisionProblem.from_json(SAHIN_PATH)
+    result = TopsisStrategy().calculate_ranking(problem)
+    positions = {
+        result.alternative_names[i]: pos
+        for pos, i in enumerate(result.ranking, start=1)
+    }
+    assert positions == SAHIN_TOPSIS_MW
+
+
+def test_sahin_promethee_runs_with_default_thresholds():
+    problem = DecisionProblem.from_json(SAHIN_PATH)
+    result = PrometheeStrategy().calculate_ranking(problem)
+    assert result.alternative_names[result.ranking[0]] == "Hydro"
