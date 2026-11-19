@@ -47,6 +47,7 @@ EXAMPLE_LABELS = {
     "laptop_selection": "Wybór laptopa (przykład dydaktyczny)",
     "sewage_network_variants": "Warianty sieci kanalizacyjnej (przykład domenowy)",
     "wastewater_treatment_vientiane": "Oczyszczanie ścieków, Vientiane (dane rzeczywiste z literatury)",
+    "energy_turkey_sahin": "Mix energetyczny Turcji (dane rzeczywiste z literatury)",
 }
 
 
