@@ -87,7 +87,7 @@ class PrometheeStrategy(ICalculationStrategy):
         phi_minus = pi.sum(axis=0) / (m - 1)
         phi_net = phi_plus - phi_minus
 
-        ranking = list(np.argsort(-phi_net))  # PROMETHEE II -- ranking pelny
+        ranking = list(np.argsort(-phi_net, kind="stable"))  # PROMETHEE II -- ranking pelny
 
         promethee_i = self._partial_ranking(phi_plus, phi_minus)
 

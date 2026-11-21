@@ -53,9 +53,7 @@ def simulate_rank_reversal(
     problem : DecisionProblem
         Oryginalny problem decyzyjny (z pelnym active_mask).
     strategy : ICalculationStrategy
-        Metoda MCDM, ktorej stabilnosc badamy (typowo AHP lub TOPSIS,
-        zgodnie z hipoteza badawcza pracy o ich podatnosci na rank
-        reversal, w kontrascie do PROMETHEE/ELECTRE).
+        Metoda MCDM, ktorej stabilnosc badamy (dowolna z czterech metod).
     alternative_name : str
         Nazwa alternatywy do usuniecia z macierzy decyzyjnej.
     top_k : int
@@ -85,7 +83,7 @@ def simulate_rank_reversal(
     modified_result = strategy.calculate_ranking(modified_problem)
     modified_order = modified_result.as_ordered_names()
 
-    position_changes = _compare_positions(baseline_order, modified_order)
+    position_changes = _compare_positions(baseline_order, modified_order, alternative_name)
 
     reversal_detected = _has_top_k_reversal(
         baseline_order, modified_order, alternative_name, top_k
@@ -102,21 +100,28 @@ def simulate_rank_reversal(
 
 
 def _compare_positions(
-    baseline_order: list[str], modified_order: list[str]
+    baseline_order: list[str],
+    modified_order: list[str],
+    removed_name: str | None = None,
 ) -> dict[str, tuple[int, int | None]]:
     """
-    Dla kazdej alternatywy (poza usunieta) zwraca krotke
-    (pozycja_przed, pozycja_po). Pozycje liczone od 1.
+    Dla każdej alternatywy zwraca krotkę (pozycja_przed, pozycja_po),
+    pozycje liczone od 1. Pozycje "przed" liczone są w rankingu
+    bazowym PO wykluczeniu usuniętej alternatywy, dzięki czemu samo
+    przesunięcie pozycji wynikające z usunięcia (np. lidera) nie jest
+    traktowane jako zmiana. Dla usuniętej alternatywy zwracana jest
+    para (pozycja w rankingu bazowym, None).
     """
-    baseline_pos = {name: pos + 1 for pos, name in enumerate(baseline_order)}
+    remaining_baseline = [n for n in baseline_order if n != removed_name]
+    baseline_pos = {name: pos + 1 for pos, name in enumerate(remaining_baseline)}
     modified_pos = {name: pos + 1 for pos, name in enumerate(modified_order)}
 
     changes = {}
-    for name in baseline_order:
-        if name in modified_pos:
-            changes[name] = (baseline_pos[name], modified_pos[name])
+    for full_pos, name in enumerate(baseline_order, start=1):
+        if name == removed_name:
+            changes[name] = (full_pos, None)  # usunięta alternatywa
         else:
-            changes[name] = (baseline_pos[name], None)  # to byla usunieta alternatywa
+            changes[name] = (baseline_pos[name], modified_pos.get(name))
     return changes
 
 

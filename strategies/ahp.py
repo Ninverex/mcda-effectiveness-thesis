@@ -118,7 +118,7 @@ class AhpStrategy(ICalculationStrategy):
 
         # Synteza: wazona suma priorytetow
         scores = normalized @ weights
-        ranking = list(np.argsort(-scores))
+        ranking = list(np.argsort(-scores, kind="stable"))
 
         return RankingResult(
             method_name=self.name,

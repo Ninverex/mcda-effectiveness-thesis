@@ -57,7 +57,7 @@ class TopsisStrategy(ICalculationStrategy):
         # 5. Wskaznik bliskosci wzgledem rozwiazania idealnego
         closeness = safe_divide(d_minus, d_plus + d_minus)
 
-        ranking = list(np.argsort(-closeness))  # malejaco: najlepszy pierwszy
+        ranking = list(np.argsort(-closeness, kind="stable"))  # malejaco: najlepszy pierwszy
 
         return RankingResult(
             method_name=self.name,

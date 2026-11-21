@@ -123,7 +123,7 @@ class ElectreIStrategy(ICalculationStrategy):
         incoming = outranking.sum(axis=0)   # ile alternatyw przewyzsza a
         net_flow = outgoing - incoming
 
-        ranking = list(np.argsort(-net_flow))
+        ranking = list(np.argsort(-net_flow, kind="stable"))
 
         kernel = self._compute_kernel(outranking)
 
